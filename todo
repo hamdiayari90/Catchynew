@@ -1,0 +1,22 @@
+subject in back end unify 
+
+id IPhone 14 pro max   74C151A6-B0A8-40CD-84B5-364FB0140246
+npx uri-scheme open tde://catchy/eventById/c0e15bfd-9b80-436a-a8f8-bc1cc5b233f0 --android
+and in firebase condition from any app
+› Android: Opening URI "tde://catchy/eventById/7d6e24ae-b2e4-4b58-8f96-3c4ff00b70ce" in emulatorto open any route from any page you can just pass this unstead of navigation.navigate : 
+         <View>
+            <Button 
+             onPress={()=> Linking.openURL('catchy://tde/eventById/111')}>linking test
+             >
+            
+            </Button>
+         </View>
+
+
+
+
+    in Gifts Screen where won gifts from wheel of fortune check the search bar not working 
+
+         npx uri-scheme open tde://catchy/eventById/c0e15bfd-9b80-436a-a8f8-bc1cc5b233f0 --android
+adb shell am start -W -a android.intent.action.VIEW -d "tde://catchy/eventById/0b24d79c-5907-41b8-b234-1f6f8010296e?backButton=true" com.notifexample
+
