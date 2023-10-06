@@ -5,6 +5,9 @@ import {
   View,
   FlatList,
   BackHandler,
+  TouchableOpacity,
+  Image,
+  Text,
   Alert,
 } from 'react-native';
 import * as api from '../services/api';
@@ -20,13 +23,14 @@ import jwt_decode from 'jwt-decode';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SwitchPage} from '../components/SwitchPage/SwitchPage';
 import SegmentedControl from '../components/segementControl/Segment';
-import {Font} from '../constants/colors/color';
+import { Color, FontFamily, Padding, Border, FontSize } from "../assets/home9/GlobalStyles";
 import {WheelGift} from '../components/WheelGift';
 import axios from 'axios';
 import {useRecoilState, useRecoilValue} from 'recoil';
 import {userInfomation} from '../atom/auth';
 import {baseUrl} from '../atom/responseSurveyState';
 import NoData from '../components/NoData.js/NoData';
+import { DarkModeProvider, DarkModeContext } from '../../DarkModeContext';
 
 export default function GiftListScreen({navigation}) {
   // handle press buttom
@@ -57,6 +61,8 @@ export default function GiftListScreen({navigation}) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [userInfo, setUserInfo] = useState({});
   const [giftSetup, setGiftSetup] = useState([]);
+  const { isDarkMode } = React.useContext(DarkModeContext);
+
   const [user, setUser] = useRecoilState(userInfomation);
   // ********************************************************************
   // **   ##******************************************************##   **
@@ -219,29 +225,43 @@ export default function GiftListScreen({navigation}) {
     }
   };
   return (
-    <SafeAreaView style={styles.container}>
+<SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? "#323232" : "#FAFAFA" }]}>
       {fetching ? (
         <SwitchPage />
       ) : (
         <>
-          <View style={{height: HEIGHT / 4}}>
+          <View style={{height: HEIGHT / 5.5}}>
             <MenuHeaders
               navigation={navigation}
               userInfo={userInfo}
               title="CADEAUX"
             />
           </View>
+          <TouchableOpacity onPress={() => navigation.navigate("Cadeaux")}> 
+    <View style={[styles.buttonsParent, styles.buttonsFlexBox]}>
+      <View style={[styles.buttons, styles.buttonsFlexBox]}>
+        <Image
+          style={styles.icons}
+          resizeMode="cover"
+          source={require("../assets/home9/icons18.png")}
+        />
+      </View>
+      <Text style={[styles.text, styles.textTypo, isDarkMode ? { color: '#FFFFFF' } : {}
+]}>Retour</Text>
+    </View>
+</TouchableOpacity>
           <View>
             <View style={styles.box}>
               <SegmentedControl
                 style={styles.tabItem}
                 containerMargin={16}
-                segments={['Cadeaux achetés', 'Cadeaux gagnés']}
+                segments={['En cours', 'Historique']}
                 onChange={index => setTabIndex(index)}
                 currentIndex={tabIndex}
               />
             </View>
           </View>
+          <View style={{ height: 10 }} />
 
           {tabIndex == 0 ? (
             <FlatList
@@ -250,17 +270,9 @@ export default function GiftListScreen({navigation}) {
               refreshing={refreshing}
               onRefresh={onRefresh}
               data={filteredDataSource}
-              ListHeaderComponent={
-                filteredDataSource.length > 0 && (
-                  <Searchbar
-                    style={{width: '90%', marginTop: '2%',height: 56, borderColor: '#E4DFDF', borderRadius: 12, color: '#747688'}}
-                    placeholder="rechercher"
-                    onChangeText={text => searchFilterFunction(text)}
-                    value={search}
-                  />
-                )
-              }
               keyExtractor={(item, index) => index}
+              ItemSeparatorComponent={() => <View style={{ height: 10 }} />} 
+
               renderItem={post => {
                 const item = post.item;
                 return <GiftItem item={item} />;
@@ -288,7 +300,7 @@ export default function GiftListScreen({navigation}) {
                 let data = post.item;
                 return <WheelGift item={data} giftSetup={giftSetup} />;
               }}
-              ListEmptyComponent={<NoData message="il n'ya des cadeaux ..." />}
+              ListEmptyComponent={<NoData message="Archive" />}
             />
           )}
         </>
@@ -300,7 +312,7 @@ export default function GiftListScreen({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor:"#F0F0F0",
   },
   backgroundImageContainer: {
     width: '100%',
@@ -317,6 +329,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     alignItems: 'center',
+
   },
   separator: {
     marginTop: 0,
@@ -327,10 +340,36 @@ const styles = StyleSheet.create({
     padding: 3,
     backgroundColor: 'rgba(0, 0, 0, 0.0287096)'
   },
+  buttonsParent: {
+    top: -40,
+    flexDirection: "row",
+    justifyContent: "center",
+    left: 20,
+    position: "absolute",
+  },
+  buttons: {
+    borderRadius: 32,
+    backgroundColor: Color.primary,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    height: 40,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textTypo: {
+    textAlign: "left",
+    color: Color.black,
+    top: 9,
+    left: 5,
+    lineHeight: 18,
+    fontWeight: "700",
+    fontSize: FontSize.size_sm,
+  },
   noGifts: {
     textAlign: 'center',
     fontSize: 20,
-    fontFamily: Font.primary,
+    fontFamily: FontFamily.poppinsBold,
     fontWeight: 'bold',
   },
 });

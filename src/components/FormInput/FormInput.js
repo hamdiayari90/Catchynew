@@ -20,6 +20,7 @@ export const FormInput = ({
       </View>
       <TextInput
         onBlur={onBlur}
+        
         value={labelValue}
         style={styles.input}
         numberOfLines={1}

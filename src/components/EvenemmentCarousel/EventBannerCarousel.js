@@ -1,133 +1,242 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { WIDTH } from '../../utils/Dimension';
-import { Card } from 'react-native-paper';
+import * as React from "react";
+import { Image, StyleSheet, Text, View, TouchableOpacity, Linking } from "react-native";
+import { Color, FontSize, FontFamily, Border, Padding } from "../../assets/event/GlobalStyles";
+import moment from 'moment/min/moment-with-locales';
 
-export const PromotionBannerCarousel = ({ item, navigation, user, promoId }) => {
-  const { id, title, points, status, endDate, thumbnail } = item;
-
-  return (
-    <Card
-      style={{
-        borderRadius: 15,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
-        elevation: 4,
-        borderWidth: 0,
-      }}
-    >
-      <TouchableOpacity
-        onPress={() =>
-          navigation.push('Video', {
-            vedioName: item.nameVideo,
-            occurrence: item.occurrence,
-            points: item.points,
-            user: user,
-            promoId: promoId,
-          })
-        }
-      >
-        <Card.Cover source={{ uri: `data:thumbnail/png;base64,${thumbnail}` }} />
-        <View style={styles.cardContent}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.points}>{item.points} points</Text>
-        </View>
-      </TouchableOpacity>
-    </Card>
-  );
-};
-
-export const EventBannerCarousel = ({ item, navigation }) => {
+export const EventBannerCarousel = ({item, navigation}) => {
   const {
     id,
-    image: { picByte },
+    image: { name: imageName },
     name,
-  } = item;
+    endDate,
+    status,
+    gameUrl,
+    locations,
+} = item;
+if (locations && locations.length > 0) {
+}
+const baseImageUrl = "https://www.catchy.tn/media/event/";
+const handleOpenURL = async () => {
+  const canOpen = await Linking.canOpenURL(item.gameUrl);
+
+  if (canOpen) {
+      Linking.openURL(item.gameUrl);
+  } else {
+      console.log('Cannot open URL');
+  }
+};
 
   return (
-    <Card
-      style={{
-        borderRadius: 15,
-        overflow: 'hidden',
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
-        elevation: 4,
-        borderWidth: 0,
-      }}
-    >
-      <View style={{ flexDirection: 'row' }}>
-        <Card.Cover
-          source={{ uri: `data:image/png;base64,${picByte}` }}
-          style={{ width: 200, height: 128 }}
-          resizeMethod='scale'
-          resizeMode='contain'
-        />
+    <View style={styles.instanceParent}>
+      <View style={styles.frameWrapper}>
+        <View style={styles.maskGroupParent}>
+                    
 
-        <View style={{ flexGrow: 1, paddingLeft: 16 }}>
-          <View>
-            <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 16 }}>{name}</Text>
-            <Text style={{ fontFamily: 'Roboto', marginTop: 5 }}>Participez et gagnez</Text>
-            <Text style={{ fontFamily: 'Roboto', marginTop: 5 }}>pleins de cadeaux !</Text>
+        <TouchableOpacity
+  onPress={() =>
+    navigation.navigate('Event', {
+      item: item,
+      long: item.locations[0].longitude,
+      lat: item.locations[0].latitude,
+    })
+  }
+>
+  <Image
+    style={styles.maskGroupIcon}
+    resizeMode="cover"
+    source={{ uri: `${baseImageUrl}${imageName}` }}
+  />
+</TouchableOpacity>
+
+          <View style={styles.frameParent}>
+            <View style={styles.textWrapper}>
+              <Text style={styles.text}>{item.name}</Text>
+            </View>
+            <View style={styles.frameContainer}>
+              <View style={styles.textWrapper}>
+                <View style={styles.textWrapper}>
+                  <View style={styles.iconsParent}>
+                    <Image
+                      style={styles.iconsLayout}
+                      resizeMode="cover"
+                      source={require("../../assets/event/icons.png")}
+                    />
+                    <Text style={[styles.text1, styles.textTypo]}>
+                    {moment(item.startDate)
+                      .locale('fr')
+                      .format('MMMM Do YYYY, h:mm ')}</Text>
+                  </View>
+                  <View style={styles.iconsGroup}>
+                    <Image
+                      style={[styles.icons1, styles.iconsLayout]}
+                      resizeMode="cover"
+                      source={require("../../assets/event/icons1.png")}
+                    />
+                    <View style={styles.textParent}>
+                      <Text style={styles.textTypo}>Emplacements</Text>
+                      <View style={styles.wrapper}>
+                      <Text style={styles.text3}>+{locations.length}</Text>
+
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.iconsContainer}>
+                <TouchableOpacity onPress={handleOpenURL}>
+    <Image
+        style={styles.icons2}
+        resizeMode="cover"
+        source={require("../../assets/event/icons2.png")}
+    />
+</TouchableOpacity>
+                  <Image
+                    style={[styles.frameChild, styles.frameLayout]}
+                    resizeMode="cover"
+                    source={require("../../assets/event/icons3.png")}
+                  />
+                  <Image
+                    style={[styles.frameItem, styles.frameLayout]}
+                    resizeMode="cover"
+                    source={require("../../assets/event/frame-9310.png")}
+                  />
+                </View>
+              </View>
+            </View>
           </View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Event', {
-                item: item,
-                long: item.locations[0].longitude,
-                lat: item.locations[0].latitude,
-              })
-            }
-            style={styles.participateButton}
-          >
-            <Text style={styles.participateButtonText}>Participer</Text>
-          </TouchableOpacity>
         </View>
       </View>
-    </Card>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  cardContent: {
+  textTypo: {
+    color: Color.lightGrey2,
+    lineHeight: 16,
+    fontSize: FontSize.size_2xs,
+    fontFamily: FontFamily.interSemiBold,
+    fontWeight: "600",
+    textAlign: "left",
+  },
+  iconsLayout: {
+    height: 12,
+    width: 12,
+  },
+  frameLayout: {
+    marginLeft: 8,
+    height: 30,
+    borderRadius: Border.br_21xl,
+  },
+  maskGroupIcon: {
+    width: 115,
+    borderRadius: 10,
+    height: 126,
+  },
+  text: {
+    fontSize: FontSize.size_sm,
+    lineHeight: 18,
+    fontWeight: "700",
+    fontFamily: FontFamily.poppinsBold,
+    color: Color.black1,
+    textAlign: "left",
+  },
+  textWrapper: {
+    alignSelf: "stretch",
+  },
+  text1: {
+    marginLeft: 4,
+  },
+  iconsParent: {
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  icons1: {
+    overflow: "hidden",
+  },
+  text3: {
+    position: "absolute",
+    top: 0,
+    left: 5,
+    fontSize: FontSize.size_4xs_4,
+    lineHeight: 11,
+    color: Color.white,
+    width: 11,
+    height: 10,
+    zIndex: 0,
+    fontFamily: FontFamily.interSemiBold,
+    fontWeight: "600",
+    textAlign: "left",
+  },
+  wrapper: {
+    borderRadius: Border.br_6xs,
+    backgroundColor: Color.error,
+    width: 21,
+    height: 13,
+    marginLeft: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textParent: {
+    marginLeft: 4,
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  iconsGroup: {
+    marginTop: 2,
+    alignItems: "center",
+    flexDirection: "row",
+  },
+  icons2: {
+    height: 30,
+    borderRadius: Border.br_21xl,
+    width: 30,
+    overflow: "hidden",
+  },
+  frameChild: {
+    width: 31,
+    overflow: "hidden",
+  },
+  frameItem: {
+    width: 30,
+    marginLeft: 8,
+  },
+  iconsContainer: {
+    marginTop: 8,
+    flexDirection: "row",
+  },
+  frameContainer: {
+    marginTop: 8,
+    alignSelf: "stretch",
+  },
+  frameParent: {
+    paddingVertical: Padding.p_5xs,
+    marginLeft: 1,
+    padding: 5, // reduce this value to reduce the spacing
+
+
+  },
+  maskGroupParent: {
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+  frameWrapper: {
+    borderRadius: Border.br_xl,
+    backgroundColor: Color.pureWhite,
+    shadowColor: "rgba(38, 38, 38, 0.04)",
+    shadowOffset: {
+      width: 5,
+      height: 4,
+    },
+    shadowRadius: 40,
+    elevation: 40,
+    shadowOpacity: 1,
     padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 20,
+    marginHorizontal: 0,
+
   },
-  title: {
-    fontSize: 16,
-  },
-  points: {
-    fontSize: 14,
-  },
-  participateButton: {
-    borderRadius: 3,
-    width: WIDTH / 3,
-    alignSelf: 'flex-start',
-    backgroundColor: '#5669FF',
-    marginTop: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  participateButtonText: {
-    fontSize: 15,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    paddingHorizontal: 5,
-    fontFamily: 'Roboto',
-    textAlign: 'center',
-    letterSpacing: 1.3,
-  },
+  instanceParent: {
+    flexDirection: "row",
+    
+    },
 });
+

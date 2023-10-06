@@ -13,7 +13,7 @@ export const SwitchPage = () => {
           alignSelf: 'center',
         }}>
         <LottieView
-          source={require('../../assets/animated/animation60hz.json')}
+          source={require('../../assets/animated/waiting.json')}
           autoPlay
           loop
           style={{

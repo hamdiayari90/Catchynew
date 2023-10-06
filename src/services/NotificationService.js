@@ -6,6 +6,7 @@ import notifee, {
   
 } from '@notifee/react-native';import {Color} from '../constants/colors/color';
 import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NotificationService = () => {
   // Add your service logic here
@@ -35,6 +36,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       },
     },
   });
+  await AsyncStorage.setItem('hasNotification', 'true');
+
 });
 
 notifee.onForegroundEvent(async ({type, detail}) => {

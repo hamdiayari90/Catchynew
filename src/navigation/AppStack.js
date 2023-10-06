@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {Text, View, ActivityIndicator, TouchableOpacity} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginStack from './LoginStack';
-import DrawerNavigator from './DrawerNavigator';
 import {NavigationContainer} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PromotionScreen from '../screens/PromotionScreen';
@@ -18,8 +17,13 @@ import MediaForm from '../screens/MediaForm';
 import Event from '../components/Event';
 import BuyModal from '../components/BuyModal';
 import EventScreen from '../screens/EventScreen';
+import EventerScreen from '../screens/EventerScreen';
 import ProductsScreen from '../screens/ProductsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import HomeScreen from '../screens/HomeScreen';
+import OnboardingECatalogue from '../screens/OnboardingECatalogue';
+
+import CatalogueMagazin from '../screens/CatalogueMagazin';
 import {Product} from '../components/Card/Product';
 import {MediaVideo} from '../components/MediaVideo/MediaVideo';
 import {MediaStack} from '../navigation/MediaStack';
@@ -36,13 +40,19 @@ import linking from '../navigation/Linking';
 import {EventById} from '../screens/EventById';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Splash from '../screens/Splash';
+import GameScreen from '../screens/GameScreen';
+import FilterScreen from '../screens/FilterScreen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MainNavigator from './MainNavigator';
+import BottomNavigation from '../components/BottomNavigation';
+import { createStackNavigator } from '@react-navigation/stack';
 
 export default function AppStack({}) {
   const [backNotif, setBackNotif] = useState({});
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useRecoilState(userToken);
   const [isSignedIn, setIsSignedIn] = useRecoilState(verifyIsSignedIn);
-
+  const Tab = createBottomTabNavigator();
   useEffect(() => {
     AsyncStorage.getItem('profile').then(result => {
       if (result !== null) {
@@ -52,211 +62,69 @@ export default function AppStack({}) {
       setLoading(false);
     });
   });
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  return (
-    !loading && (
-      <>
-        {isSignedIn ? (
-          <NavigationContainer
-            ref={navigationRef}
-            linking={linking}
-            fallback={
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <ActivityIndicator size="large" color={Color.secondary} />
-              </View>
-            }>
-            <Stack.Navigator
-              initialRouteName="Acceuil"
-              screenOptions={{headerMode: 'none', headerShown: false}}>
-              
-              {/* <Stack.Screen 
-                name="SplashScreen"
-                options={{
-                  headerShown: false,
-                }}
-                component={Splash}
-              /> */}
-              
-              <Stack.Screen
-                name="Acceuil"
-                options={{}}
-                component={DrawerNavigator}
-              />
+const handleDrawerToggle = () => {
+  setIsDrawerOpen(!isDrawerOpen);
+};
+const openFilterMenu = () => {
+  navigation.navigate('MainStackNavigator', { screen: 'FilterScreen' });
+};
+const openOnBoarding1 = () => {
+  navigation.navigate('MainStackNavigator', { screen: 'OnboardingECatalogue' });
+};
+const getActiveRouteName = (state) => {
+  const route = state.routes[state.index];
+  if (route.state) {
+    return getActiveRouteName(route.state);
+  }
+  console.log("Current route name:", route.name);  // Add this
+  return route.name;
+};
 
-              <Stack.Screen
-                name="Survey"
-                options={{
-                  headerTitleStyle: {color: 'white'},
-                }}
-                component={SurveyList}
-              />
-              <Stack.Screen
-                name="AnswerSurvey"
-                options={{
-                  headerTitleStyle: {color: 'white'},
-                }}
-                component={AnswerSurveyScreen}
-              />
-              <Stack.Screen
-                name="RespondSurvey"
-                options={{
-                  headerTitleStyle: {color: 'white'},
-                }}
-                component={SurveyById}
-              />
-              <Stack.Screen
-                name="DetailsSondage"
-                options={{
-                  // headerShown: true,
-                  // headerStyle: {
-                  //   backgroundColor: Color.light,
-                  // },
-                  headerTitle: 'Détails Sondage',
-                  headerTitleStyle: {color: 'white'},
-                }}
-                component={DetailsSondage}
-              />
-              <Stack.Screen
-                name="Promotion"
-                options={{
-                  headerShown: false,
-                  headerStyle: {
-                    backgroundColor: Color.light,
-                  },
-                  headerTitle: 'Détails Sondage',
-                  headerTitleStyle: {color: 'white'},
-                }}
-                component={PromotionScreen}
-              />
-              <Stack.Screen
-                name="Video"
-                options={{
-                  headerTitleStyle: {color: 'white'},
-                }}
-                component={Video}
-              />
-              <Stack.Screen
-                options={{
-                  // headerShown: true,
-                  // headerStyle: {
-                  //   backgroundColor: Color.light,
-                  // },
-                  headerTitleStyle: {color: Color.light, textAlign: 'center'},
-                }}
-                name="MediaForm"
-                component={MediaForm}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: false,
+return (
+  <>
+    {isSignedIn ? (
+      <NavigationContainer
 
-                  headerTitleStyle: {color: 'white'},
-                }}
-                name="Profil"
-                component={ProfileScreen}
-              />
-              <Stack.Screen
-                name="Event"
-                options={{
-                  headerShown: true,
 
-                  headerTitleStyle: {color: 'white'},
-                }}
-                component={Event}
-              />
-              <Stack.Screen
-                options={{
-                  // headerShown: true,
-                  // headerStyle: {
-                  // },
-                  headerTitleStyle: {color: 'white'},
-                }}
-                name="Catalogue"
-                component={ProductsScreen}
-              />
+        ref={navigationRef}
+        linking={linking}
+        fallback={
+          
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
 
-              <Stack.Screen
-                name="contact"
-                options={{
-                  headerTitleStyle: {color: 'white'},
-                  // headerShown: true,
-                  presentation: 'modal',
-                }}
-                component={BuyModal}
-              />
-              <Stack.Screen
-                name="EventScreen"
-                options={{
-                  headerTitleStyle: {color: 'white'},
-                }}
-                component={EventScreen}
-              />
-              <Stack.Screen
-                name="ProductCompoent"
-                component={Product}
-                options={{headerShown: false}}
-              />
-              <Stack.Screen
-                name="gallery"
-                component={MediaStack}
-                options={{headerShown: true}}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: true,
+              <ActivityIndicator size="large" color={Color.secondary} />
+            </View>
+          }>
+            
+            <Tab.Navigator
+  tabBar={(props) => (
+    <BottomNavigation 
+      key={getActiveRouteName(props.state)}
+      {...props} 
+      currentRouteName={getActiveRouteName(props.state)} 
+    />
+  )}
+>
 
-                  headerTitleStyle: {color: 'white'},
-                }}
-                name="SliderEntryCadeaux"
-                component={SliderEntry}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: true,
-                  headerStyle: {},
-                  headerTitleStyle: {color: 'white'},
-                  presentation: 'modal',
-                }}
-                name="OneProduct"
-                component={OneProduct}
-              />
-              <Stack.Screen
-                name="EventId"
-                component={EventById}
-                options={{
-                  headerTitle: 'Event',
-                  headerTitleStyle: {color: 'white'},
-                  // headerStyle: {backgroundColor: 'blue'},
-                  headerShown: true,
-                  headerLeft: () => (
-                    <TouchableOpacity onPress={() => navigate('Acceuil')}>
-                      {/* <Icon */}
-                      <Ionicons name="arrow-back" color="#000" size={22} />
-                    </TouchableOpacity>
-                  ),
-                }}
-              />
-              <Stack.Screen
-                options={{
-                  headerShown: true,
-                  headerStyle: {},
-                  // headerTitleStyle: {color: 'white'},
-                  title: 'Notifications',
-                }}
-                name="Setting"
-                component={Setting}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        ) : (
-          <LoginStack />
-        )}
-      </>
-    )
-  );
-}
+          <Tab.Screen
+            name="Home"
+            options={{
+              headerShown: false,
+            }}
+            component={MainNavigator}
+          />  
+                
+        </Tab.Navigator>
+      </NavigationContainer>
+    ) : (
+      <LoginStack />
+    )}
+  </>
+);}

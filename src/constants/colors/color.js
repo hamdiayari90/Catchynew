@@ -1,9 +1,9 @@
 export const Color = {
-    primary : "#4A43EC",
+    primary : "#000000",
     secondary : "#040606",
     tertiary : "#23408F",
     light : '#fff',
-    customBlue: '#5D56F3',
+    customBlue: '#ffdd00',
     headingBlue: '#120D26',
     colorPrimaryBlue: "#5669ff",
     Quaternary : "#8CE0FF",

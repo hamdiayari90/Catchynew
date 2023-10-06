@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import {
+  FlatList,
   View,
   StyleSheet,
   TouchableOpacity,
@@ -174,7 +175,7 @@ export const SignupScreen = ({navigation}) => {
         },
       };
       let getadr = await fetch(
-        `http://145.239.166.14:8082/city`,
+        `http://94.237.82.88:8082/city`,
         requestOptions,
       );
       let response = getadr.json();
@@ -495,7 +496,6 @@ export const SignupScreen = ({navigation}) => {
             <View style={styles.OneInputContainer}>
               <View style={styles.textInputContainer}>
                 <TextInput
-                  mode='outlined'
                   ref={userNameRef}
                   value={values.username}
                   placeholder="Nom & prénom"
@@ -542,7 +542,6 @@ export const SignupScreen = ({navigation}) => {
             <View style={styles.OneInputContainer}>
               <View style={styles.textInputContainer}>
                 <TextInput
-                  mode='outlined'
                   ref={emailRef}
                   value={values.email}
                   placeholder="foulen@foulen.com"
@@ -586,7 +585,6 @@ export const SignupScreen = ({navigation}) => {
             <View style={styles.OneInputContainer}>
               <View style={styles.textInputContainer}>
                 <TextInput
-                  mode='outlined'
                   ref={password}
                   icon="lock"
                   value={values.password}
@@ -627,7 +625,6 @@ export const SignupScreen = ({navigation}) => {
             <View style={styles.OneInputContainer}>
               <View style={styles.textInputContainer}>
                 <TextInput
-                  mode='outlined'
                   ref={confPassword}
                   icon="lock"
                   value={values.confPassword}
@@ -652,13 +649,10 @@ export const SignupScreen = ({navigation}) => {
               </View>
             </View>
           </View>
-          {/* ******************************************************************************************************************** */}
-          {/* **************************************************** FIRST NAME  *************************************************** */}
-          <View style={styles.inputContainer}>
+            <View style={styles.inputContainer}>
             <View style={styles.OneInputContainer}>
               <View style={styles.textInputContainer}>
                 <TextInput
-                  mode='outlined'
                   icon="user"
                   value={values.firstname}
                   placeholder="Entrez votre prénom*"
@@ -696,7 +690,6 @@ export const SignupScreen = ({navigation}) => {
                   onBlur={handleBlur('lastname')}
                   // onSubmitEditing={() => handleSubmit()}
                   error={touched.lastname && errors.lastname}
-                  mode='outlined'
                   style={styles.input}
                 />
                 <ErrorMessage
@@ -726,7 +719,6 @@ export const SignupScreen = ({navigation}) => {
                   // onSubmitEditing={() => handleSubmit()}
                   keyboardType="numeric"
                   error={touched.mobilePhone && errors.mobilePhone}
-                  mode='outlined'
                   style={styles.input}
                 />
                 <ErrorMessage
@@ -766,7 +758,6 @@ export const SignupScreen = ({navigation}) => {
                   // onSubmitEditing={() => handleSubmit()}
                   maxLength={4}
                   error={touched.zipCode && errors.zipCode}
-                  mode='outlined'
                   style={styles.input}
                 />
                 <ErrorMessage errorValue={touched.zipCode && errors.zipCode} />
@@ -818,56 +809,6 @@ export const SignupScreen = ({navigation}) => {
               )}
             </View>
           </TouchableOpacity>
-
-          {/* 
-          <View
-            style={{
-              width: '90%',
-              justifyContent: 'center',
-              alignContent: 'center',
-              alignItems: 'center',
-              alignSelf: 'center',
-              marginTop: 20,
-              marginBottom: 10,
-              borderColor: '#ccc',
-              borderRadius: 3,
-              backgroundColor: '#fff',
-              borderRadius: 20,
-            }}>
-            <DropDownPicker
-              dropDownContainerStyle={{
-                backgroundColor: Color.light,
-              }}
-              placeholder={'sélectionnez votre ville '}
-              placeholderStyle={{
-                color: adrtColor ? 'red' : Color.secondary,
-              }}
-              closeAfterSelecting={true}
-              itemSeparatorStyle={{
-                backgroundColor: '#000',
-              }}
-              customItemLabelStyle={{
-                fontStyle: 'italic',
-              }}
-              selectedItemContainerStyle={{
-                backgroundColor: '#dff9fb',
-              }}
-              closeOnBackPressed={true}
-              open={openAdr}
-              value={selectedAdress}
-              items={addressValue}
-              setOpen={setOpenAdr}
-              setValue={setSelectedAdress}
-              multiple={false}
-              mode="BADGE"
-              listMode="MODAL"
-              dropDownDirection="TOP"
-              modalTitle="sélectionnez votre ville "
-            />
-          </View> */}
-          {/* **************************************************************************************************************** */}
-          {/* **************************************************** GENDER  *************************************************** */}
-
           <View style={{justifyContent: 'center', alignSelf: 'center'}}>
             <Text style={{fontFamily: Font.primary}}>
               Selectionner votre sex
@@ -936,7 +877,6 @@ export const SignupScreen = ({navigation}) => {
               searchPlaceholder="rechercher"
               modalCloseButtonText="Annuler"
               modalDoneButtonText="confirmer"
-              textInputMode="outlined"
               theme={{
                 colors: {
                   placeholder: 'black',
@@ -970,7 +910,6 @@ export const SignupScreen = ({navigation}) => {
               selectedArrayList={choseInterrest.selectedList}
               errorText={choseInterrest.error}
               multiEnable={true}
-              textInputMode="outlined"
               searchStyle={{iconColor: '#000'}}
               searchPlaceholder="rechercher"
               modalCloseButtonText="Annuler"

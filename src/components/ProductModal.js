@@ -132,6 +132,7 @@ const ProductModal = (props) => {
             ]}
             onPress={() => ConfirmationDialog(props.item.price, props.item.id, props.closeModal)}
           >
+            
             <Text style={styles.btnText}>ACHETER</Text>
           </TouchableOpacity>
         </View>

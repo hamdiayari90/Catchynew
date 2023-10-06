@@ -60,10 +60,13 @@ export default function questionList({route, navigation}) {
               <ListItem.Subtitle style={styles.point}>
                 type : {l.type}
               </ListItem.Subtitle>
+              
             </ListItem.Content>
           </ListItem>
+          
         ))}
       </ScrollView>
+      
       <Button title="Annuler" style={styles.bouton} />
       <Button title="Envoyer" />
     </View>

@@ -1,13 +1,13 @@
 const config = {
   screens: {
-    Acceuil: {
-      path: "home",
+    Home: {
+      path: "Home",
     },
     Profil: {
-      path: "profil",
+      path: "Profil",
     },
     Promotion: {
-      path: "promotion",
+      path: "Promotion",
 
     },
     EventId: {

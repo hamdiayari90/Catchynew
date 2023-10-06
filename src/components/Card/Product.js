@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Image,
   StyleSheet,
@@ -7,37 +7,24 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-
-import {Card} from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import moment from 'moment';
 import 'moment/locale/fr';
+import LottieView from 'lottie-react-native';
 
-import {HEIGHT, WIDTH} from '../../utils/Dimension';
-import {Font, Color} from '../../constants/colors/color';
+import { HEIGHT, WIDTH } from '../../utils/Dimension';
+import { Font, Color } from '../../constants/colors/color';
 
-export function Product({item, navigation, getUserInformation, user, promoId}) {
+export function Product({ item, navigation, getUserInformation, user, promoId }) {
   return (
     <Card style={styles.card}>
-      <View
-        style={{
-          height: HEIGHT / 4.5,
-          width: '100%',
-          alignSelf: 'center',
-          borderRadius: 10,
-          flexDirection: 'row',
-        }}>
-        <View
-          style={{
-            width: '30%',
-            justifyContent: 'center',
-            alignContent: 'center',
-            alignItems: 'center',
-          }}>
-          <AntDesign
-            name="playcircleo"
-            size={90}
-            color="red"
+      <View style={styles.container}>
+        <View style={styles.lottieContainer}>
+          <LottieView
+            source={require('../../assets/animated/33.json')}
+            autoPlay
+            loop
+            style={styles.lottieIcon}
             onPress={() =>
               navigation.push('Video', {
                 vedioName: item.nameVideo,
@@ -49,89 +36,36 @@ export function Product({item, navigation, getUserInformation, user, promoId}) {
               })
             }
           />
-        
         </View>
-        <View
-          style={{
-            width: '40%',
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}>
-            <Text
-            style={{
-              fontFamily: Font.primary,
-              fontSize: 14,
-              fontWeight: 'bold',
-              textAlign:'center'
-            }}>
-            {item.title} 
-            
-          </Text>
-          <Text
-            style={{
-              color: Color.primary,
-              fontSize: 14,
-              fontWeight: 'bold',
-              padding: '3%',
-            }}>
-            {item.points} points
-          </Text>
-          <View
-            style={{
-              padding: '3%',
-              flexDirection: 'column',
-            }}>
-            <Text>
-              Disparu dans{' '}
-              <Text style={{color: 'green'}}>
-                {moment(item.endDate).locale('fr').fromNow(true)}
-              </Text>
+        <View style={styles.contentContainer}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.points}>{item.points} points</Text>
+          <View style={styles.disappearContainer}>
+            <Text>Disparu dans </Text>
+            <Text style={{ color: 'green' }}>
+              {moment(item.endDate).locale('fr').fromNow(true)}
             </Text>
           </View>
-          <Text
-            style={{
-              fontFamily: Font.primary,
-              fontSize: 14,
-              color: '#000',
-              paddingLeft: '2%',
-            }}>
-            Vous pouvez regarder cette promo {item.occurrence} fois jusqu'à la
-            fin et gagner des points de fidélité chaque fois.
+          <Text style={styles.description}>
+            Vous pouvez regarder cette promo {item.occurrence} fois jusqu'à la fin et gagner des points de fidélité chaque fois.
           </Text>
+          <Pressable
+            onPress={() =>
+              navigation.push('Video', {
+                vedioName: item.nameVideo,
+                occurrence: item.occurrence,
+                points: item.points,
+                getUserInformation: getUserInformation,
+                user: user,
+                promoId: promoId,
+              })
+            }
+            style={styles.buttonContainer}>
+            <View style={styles.button}>
+              <Text style={styles.buttonText}>Jouer</Text>
+            </View>
+          </Pressable>
         </View>
-        <Pressable
-          onPress={() =>
-            navigation.push('Video', {
-              vedioName: item.nameVideo,
-              occurrence: item.occurrence,
-              points: item.points,
-              getUserInformation: getUserInformation,
-              user: user,
-              promoId: promoId,
-            })
-          }
-          style={{
-            width: '30%',
-            justifyContent: 'flex-end',
-            alignItems: 'flex-end',
-            padding: '3%',
-          }}>
-          <View
-            style={{
-              backgroundColor: Color.primary,
-              borderRadius: 15,
-              padding: '5%',
-            }}>
-            <Text
-              style={{
-                letterSpacing: 1.2,
-                color: Color.light,
-                fontSize: 14,
-              }}>
-              Regarder
-            </Text>
-          </View>
-        </Pressable>
       </View>
     </Card>
   );
@@ -139,27 +73,66 @@ export function Product({item, navigation, getUserInformation, user, promoId}) {
 
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
-    // marginTop: 10,
-    backgroundColor: 'white',
-    borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    width: WIDTH - 20,
     alignSelf: 'center',
-    // marginBottom: 20,
+    width: WIDTH - 70,
+    borderRadius: 30,
+    marginBottom: 16,
     borderWidth: 1,
-    marginVertical:'1%'
   },
-  thumb: {
-    height: 150,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+  container: {
+    flexDirection: 'row',
+    padding: 16,
+  },
+  lottieContainer: {
+    width: '30%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lottieIcon: {
+    width: 100,
+    height: 100,
+  },
+  contentContainer: {
+    flex: 1,
+    paddingLeft: 16,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  title: {
+    fontFamily: Font.primary,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  points: {
+    color: '#FFD300',
+    fontSize: 12,
+    fontWeight: 'bold',
+    paddingVertical: 8,
+  },
+  disappearContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  description: {
+    fontFamily: Font.primary,
+    fontSize: 12,
+    color: '#000',
+    marginBottom: 8,
+  },
+  buttonContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  button: {
+    backgroundColor: Color.primary,
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  buttonText: {
+    letterSpacing: 1.0,
+    color: Color.light,
+    fontSize: 15,
   },
 });

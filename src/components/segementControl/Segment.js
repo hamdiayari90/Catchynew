@@ -85,7 +85,7 @@ const SegmentedControl = ({
     fontSize: 15,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#5669FF',
+    color: '#202020',
     ...activeTextStyle,
   };
 
@@ -182,7 +182,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 100,
-    backgroundColor: 'rgba(0, 0, 0, 0.0287096)',
   },
   touchableContainer: {
     flex: 1,
@@ -199,7 +198,7 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     marginHorizontal: 2,
     borderRadius: 100,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FED544',
   },
   // Badge Styles
   defaultBadgeContainerStyle: {

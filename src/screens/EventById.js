@@ -15,6 +15,7 @@ import {
   BackHandler,
   ActivityIndicator,
 } from 'react-native';
+import { DarkModeProvider, DarkModeContext } from '../../DarkModeContext';
 
 import moment from 'moment/min/moment-with-locales';
 import {GlobalButton} from '../components/Button/GlobalButton';
@@ -53,6 +54,7 @@ export const EventById = ({route, navigation}) => {
   const url = useRecoilValue(baseUrl);
   const [event, setEvent] = useState({});
   const [user, setUser] = useRecoilState(userInfomation);
+  const { isDarkMode } = React.useContext(DarkModeContext);
 
   const backAction = () => {
     navigation.reset({
@@ -397,9 +399,8 @@ export const EventById = ({route, navigation}) => {
                     width: '30%',
                   }}>
                   <Image
-                    source={{
-                      uri: `data:image/png;base64,${event.partner.logo.picByte}`,
-                    }}
+                   source={{ uri: `https://www.catchy.tn/media/partner/${logo.name}` }}
+
                     style={{
                       width: '80%',
                       height: '80%',

@@ -197,7 +197,7 @@ export const MediaGallery = ({navigation}) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           >
-          <View style={{height: HEIGHT / 5}}>
+          <View style={{height: HEIGHT / 3.4}}>
             <MenuHeaders
               navigation={navigation}
               userInfo={userInfo}

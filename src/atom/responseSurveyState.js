@@ -6,7 +6,7 @@ export const responseTextInput = atom({
 });
 export const baseUrl  = atom({
   key:'baseUrl',
-  default: 'http://catchy.tn:8082'
+  default: 'http://94.237.82.88:8082'
 })
 
 

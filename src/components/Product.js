@@ -21,8 +21,8 @@ const Product = ({item, userPoint}) => {
    
           <Card.Cover
             style={styles.cardImage}
-            source={{uri: `data:image/png;base64,${item.image.picByte}`}}
-          />
+            source={{ uri: `https://www.catchy.tn/media/product/${item.image.name}` }}
+            />
           <View style={styles.descriptionContainer}>
             <View style={styles.nameContainer}>
               <Text style={styles.name}>{item.name}</Text>

@@ -5,14 +5,16 @@ import {
   TouchableOpacity,
   ToastAndroid,
   Alert,
+  Image,
   Modal,
   ActivityIndicator,
   BackHandler,
   ScrollView,
 } from 'react-native';
 import React, {Component} from 'react';
+import { Color, FontFamily, FontSize, Padding, Border } from "../../assets/survey/GlobalStyles";
+
 import {HEIGHT} from '../../utils/Dimension';
-import {Color, Font} from '../../constants/colors/color';
 import Foundation from 'react-native-vector-icons/Foundation';
 import {TextInput} from 'react-native-paper';
 import {NativeBaseProvider, Text, Radio, Checkbox} from 'native-base';
@@ -114,7 +116,7 @@ export class SurveyById extends Component {
         },
       };
       let data = await fetch(
-        `http://145.239.166.14:8082/surveys/${this.props.route.params.surveyId}`,
+        `http://94.237.82.88:8082/surveys/${this.props.route.params.surveyId}`,
         requestOptions,
       );
       return data.json();
@@ -294,6 +296,22 @@ export class SurveyById extends Component {
       );
     }
   };
+  updateResponseForMultipleChoice(valueId) {
+    let responses = [...this.state.responses];
+    const indexResponses = responses[this.state.index];
+    
+    if (indexResponses.includes(valueId)) {
+        // If the valueId already exists in the responses, remove it
+        const updatedIndexResponses = indexResponses.filter(id => id !== valueId);
+        responses[this.state.index] = updatedIndexResponses;
+    } else {
+        // If the valueId does not exist in the responses, add it
+        responses[this.state.index].push(valueId);
+    }
+    
+    this.setState({ responses: responses });
+}
+
   // =======================================================================================
   // ============================= SUMIT SURVEY  ===========================================
   // =======================================================================================
@@ -304,7 +322,7 @@ export class SurveyById extends Component {
     // );
     // code to handle the form submission goes here
     if (this.state.responses[this.state.index][0] === undefined) {
-      Alert.alert("svp remplissez le champ avant d'avancer !");
+      Alert.alert("Veillez remplisser les champs svp !");
     } else {
       try {
         const value = await AsyncStorage.getItem('profile');
@@ -341,7 +359,11 @@ export class SurveyById extends Component {
       } catch (e) {}
     }
   };
-
+  updateResponseForChoice = (choiceId) => {
+    let updatedResponses = [...this.state.responses];
+    updatedResponses[this.state.index] = [choiceId];
+    this.setState({ responses: updatedResponses });
+}
   render() {
     const {survey, index, lastIndex, modalVisible, loading} = this.state;
     const {questions} = survey;
@@ -362,148 +384,130 @@ export class SurveyById extends Component {
               onRequestClose={() => {
                 this.setState({modalVisible: !modalVisible});
               }}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <Text style={styles.modalText}>Loading...</Text>
+            
+                <View style={styles.frameParent5}>
+                  <Text style={styles.modalText}>Merci ! Vous avez accumulé vos points</Text>
                   <ActivityIndicator size="large" color={Color.secondary} />
                 </View>
-              </View>
+       
             </Modal>
 
             {survey && survey.questions.length > 0 ? (
               <SafeAreaView style={styles.container}>
-                <View style={{height: HEIGHT / 3.5}}>
-                  <MenuHeaders
-                    // navigation={navigation}
-                    // userInfo={userInfo}
-                    title=""
-                  />
-                </View>
+                  <View style={[styles.maskGroup, styles.n1IconPosition]}>
+        <Image
+          style={[styles.n1Icon, styles.n1IconPosition]}
+          resizeMode="cover"
+          source={require("../../assets/survey/127773614-110363384232036-3311761003683354167-n-1.png")}
+        />
+        <View style={[styles.buttons1, styles.buttonsFlexBox]}>
+          <Image
+            style={styles.icons}
+            resizeMode="cover"
+            source={require("../../assets/survey/icons1.png")}
+          />
+        </View>
+        <Image
+          style={styles.maskGroupChild}
+          resizeMode="cover"
+          source={require("../../assets/survey/group-6356506.png")}
+        />
+      </View>
+      <Text style={styles.text8}>                        {survey.questions[index].title}
+
+</Text>
                 <Text style={styles.title}>
-                  {survey.title ? survey.title.toUpperCase() : ''}
                 </Text>
                 <View
                   style={{
-                    backgroundColor: Color.Quaternary,
                     flex: 1,
                     width: '95%',
                     alignSelf: 'center',
-                    borderRadius: 30,
+               
                   }}>
-                  <View style={styles.renderQuestionContainer}>
-                    <Text style={styles.question}>
-                      {survey.questions[index].title}
-                    </Text>
+                  <View style={styles.frameParent}>
                   </View>
-                  <View style={{width: '95%', alignSelf: 'center'}}>
-                    <View style={styles.responseContainer}>
-                      {survey.questions[index].type === 'RADIO' ? (
-                        <ScrollView>
-                          <Radio.Group
-                            style={styles.radioGroup}
-                            mt="5"
-                            mb="5"
-                            name="myCheckboxGroup"
-                            colorScheme="info"
-                            onChange={this.updateResponse}
-                            value={
-                              this.state.responses[this.state.index][0]
-                                ? this.state.responses[this.state.index][0]
-                                : ''
-                            }>
-                            {survey.questions[this.state.index].choices.map(
-                              value => (
-                                <View
-                                  style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'flex-start', // add this line
-                                    marginBottom: 10,
-                                    width: '100%',
-                                    borderWidth: 1,
-                                    height: HEIGHT / 15,
-                                    borderRadius: 10,
-                                    backgroundColor:
-                                      Color.backGroundColorSurvey,
-                                    borderColor: Color.borderColor,
-                                  }}
-                                  key={value.id}>
-                                  <Radio
-                                    style={[
-                                      styles.radioInput,
-                                      {alignItems: 'center'},
-                                    ]}
-                                    key={value.id}
-                                    value={value.id}
-                                    _text={{
-                                      fontSize: 16,
-                                      fontFamily: Font.primary,
-                                      fontWeight: 'bold',
-                                      textTransform: 'capitalize',
-                                      color: Color.text,
-                                      flexWrap: 'wrap',
-                                      // textAlign:'center'
-                                    }}
-                                  
-                                    >
-                                    {value.content}
-                                  </Radio>
-                                </View>
-                              ),
-                            )}
-                          </Radio.Group>
-                        </ScrollView>
-                      ) : survey.questions[index].type === 'CHECKBOX' ? (
-                        <ScrollView>
-                          <Checkbox.Group
+                  <View style={{ width: '95%', left: '5%', alignSelf: 'center' }}>
+    <View style={styles.frameParent}>
+        {survey.questions[index].type === 'RADIO' ? (
+            <ScrollView>
+                {survey.questions[this.state.index].choices.map(value => (
+                    <TouchableOpacity
+                        key={value.id}
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',  // centers the text horizontally
+                            width: '100%',
+                            height: HEIGHT / 20,  // increased height
+                            backgroundColor: 
+                                this.state.responses[this.state.index][0] === value.id 
+                                ? 'black' 
+                                : 'lightgray',
+                            padding: 10,
+                            marginVertical: 5,  // adds space between answers
+                            borderRadius: 5,  // optional: rounds the corners a bit
+                        }}
+                        onPress={() => this.updateResponseForChoice(value.id)}
+                    >
+                        <Text
                             style={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              flexWrap: 'wrap',
+                                fontSize: 16,
+                                fontFamily: FontFamily.interSemiBold,
+                                fontWeight: 'bold',
+                                textTransform: 'capitalize',
+                                color: 'white',
+                                flexWrap: 'wrap',
+                                textAlign: 'center',  // centers the text within its container
                             }}
-                            mt="5"
-                            mb="5"
-                            name="myRadioGroup"
-                            colorScheme="info"
-                            onChange={this.updateResponse}
-                            value={this.state.responses[index]}>
+                        >
+                            {value.content}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </ScrollView>
+            
+                      ) : survey.questions[index].type === 'CHECKBOX' ? (
+                        <ScrollView style={{ width: '95%', left: '-20%', alignSelf: 'center' }}>
+
                             {survey.questions[index].choices.map((value, i) => {
-                              return (
-                                <View
-                                  style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    marginBottom: 10,
-                                    width: '100%',
-                                    borderWidth: 1,
-                                    // padding:"1%",
-                                    height: HEIGHT / 18,
-                                    borderRadius: 10,
-                                    paddingLeft: 8,
-                                    backgroundColor:
-                                      Color.backGroundColorSurvey,
-                                    borderColor: Color.borderColor,
-                                  }}
-                                  key={value.id}>
-                                  <Checkbox
-                                    value={value.id}
-                                    key={i}
-                                    colorScheme="info"
-                                    _text={{
-                                      fontSize: 16,
-                                      fontFamily: Font.primary,
-                                      fontWeight: 'bold',
-                                      textTransform: 'capitalize',
-                                      color: Color.text,
-                                      flexWrap: 'wrap',
-                                    }}>
-                                    {value.content}
-                                  </Checkbox>
-                                </View>
-                              );
+                                const isSelected = this.state.responses[index].includes(value.id);
+                    
+                                return (
+                                    <TouchableOpacity
+                                        key={value.id}
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            marginBottom: 15,  // Added more space between options
+                                            width: '100%',
+                                            height: HEIGHT / 20,  // Increased height for a larger background
+                                            borderRadius: 10,
+                                            paddingLeft: 8,
+                                            backgroundColor: isSelected ? 'black' : 'lightgray',
+                                            borderColor: Color.borderColor,
+                                            justifyContent: 'center',  // Centers the text horizontally
+                                            borderWidth: isSelected ? 0 : 1, // Hide border when selected
+                                        }}
+                                        onPress={() => this.updateResponseForMultipleChoice(value.id)} // A method to handle adding/removing from the responses array
+                                    >
+                                        <Text
+                                            style={{
+                                                fontSize: 16,
+                                                fontFamily: FontFamily.interSemiBold,
+                                                fontWeight: 'bold',
+                                                textTransform: 'capitalize',
+                                                color: isSelected ? 'white' : Color.text,  // If selected, text is white. Else, use the default color.
+                                                flexWrap: 'wrap',
+                                            }}
+                                        >
+                                            {value.content}
+                                        </Text>
+                                    </TouchableOpacity>
+                                );
                             })}
-                          </Checkbox.Group>
                         </ScrollView>
+                    
                       ) : survey.questions[index].type === 'TEXT' ? (
                         <View style={{width: '90%', alignSelf: 'center'}}>
                           <TextInput
@@ -532,7 +536,7 @@ export class SurveyById extends Component {
                                 fontSize: 16,
                                 letterSpacing: 1.8,
                                 marginTop: '3%',
-                                fontFamily: Font.primary,
+                                fontFamily: FontFamily.interSemiBold,
                               }}>
                               {this.state.responses[index].toString()}
                             </Text>
@@ -544,59 +548,35 @@ export class SurveyById extends Component {
                     </View>
                   </View>
                   <View style={styles.buttonContainer}>
-                    <TouchableOpacity
-                      disabled={index == 0}
-                      onPress={() => this.previousQuestion()}>
-                      {/* <Foundation
-                        name="arrow-left"
-                        size={HEIGHT * 0.1}
-                        color={index == 0 ? '#CAD3C8' : Color.tertiary}
-                      /> */}
-                      <Text
-                        style={{
-                          color: index == 0 ? '#CAD3C8' : Color.tertiary,
-                          fontSize: 18,
-                          fontWeight: 'bold',
-                          backgroundColor:
-                            index == 0 ? '#CAD3C8' : Color.secondary,
-                          borderRadius: 10,
-                          padding: '5%',
-                          color: '#fff',
-                        }}>
-                        Précédent
-                      </Text>
-                    </TouchableOpacity>
+                  <TouchableOpacity
+    style={styles.buttons}
+    disabled={index == 0}
+    onPress={() => this.previousQuestion()}
+>
+    {/* If you don't need the Foundation component, just remove the commented out part */}
+    <Text style={styles.text9}>
+        {index == 0 ? 'Précédent' : 'Précédent'}
+    </Text>
+    {/* You might want to remove this view if it's not needed anymore */}
+    <View style={{ height: 60 }} />
+</TouchableOpacity>
 
                     <TouchableOpacity
-                      onPress={() =>
-                        this.state.index ===
-                          this.state.survey.questions.length - 1 || lastIndex
-                          ? this.handleSubmit()
-                          : this.nextQuestion()
-                      }>
-                      {/* <Foundation
-                        name={
-                          isLastQuestion || lastIndex ? 'check' : 'arrow-right'
-                        }
-                        size={HEIGHT * 0.1}
-                        color={
-                          isLastQuestion || lastIndex ? 'green' : Color.tertiary
-                        }
-                      /> */}
-                      <Text
-                        style={{
-                          fontSize: 18,
-                          fontWeight: 'bold',
-                          backgroundColor: '#2d3436',
-                          borderRadius: 10,
-                          padding: '5%',
-                          color: '#fff',
-                        }}>
-                        {isLastQuestion || lastIndex
-                          ? '  Valider  '
-                          : '  Suivant  '}
-                      </Text>
-                    </TouchableOpacity>
+    style={styles.buttons}
+    onPress={() =>
+        this.state.index === this.state.survey.questions.length - 1 || lastIndex
+            ? this.handleSubmit()
+            : this.nextQuestion()
+    }
+>
+    {/* If you don't need the Foundation component, just remove the commented out part */}
+    <Text style={styles.text9}>
+        {isLastQuestion || lastIndex ? 'Valider' : 'Suivant'}
+    </Text>
+    {/* You might want to remove this view if it's not needed anymore */}
+    <View style={{ height: 60 }} />
+</TouchableOpacity>
+
                   </View>
                 </View>
               </SafeAreaView>
@@ -614,42 +594,122 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  buttons: {
+    backgroundColor: Color.black,
+    marginTop: 24,
+    paddingHorizontal: Padding.p_base,
+    paddingVertical: Padding.p_xs,
+    height: 48,
+    borderRadius: Border.br_21xl,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    width: "90%",
+  },
   title: {
     textAlign: 'center',
     fontSize: 18,
-    fontFamily: Font.primary,
+    fontFamily: FontFamily.interSemiBold,
+  },
+  maskGroupChild: {
+    top: 60,
+    left: 67,
+    width: 76,
+
+    position: "absolute",
+  },
+  n1IconPosition: {
+    left: -5,
+    top: -20,
+    position: "absolute",
+  },
+  n1Icon: {
+    top: 0,
+    width: 400,
+    height: 200,
+  },
+  maskGroup: {
+    width: 200,
+    height: 70,
   },
   renderQuestionContainer: {
     width: '100 %',
+
     alignSelf: 'center',
     padding: '5%',
     maxHeight: 400, // set a maximum height that makes sense for your design
     overflow: 'scroll', // ensure that the content is scrollable even when it's not overflowing the container
   },
-
+  icons: {
+    width: 24,
+    height: 24,
+  },
   question: {
     color: '#000',
     fontSize: 20,
-    fontFamily: Font.primary,
+    fontFamily: FontFamily.interSemiBold,
     letterSpacing: 1.6,
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  frameParent: {
+    top: 161,
+    left: 50,
+    position: "absolute",
+  },
+    frameParent5: {
+      position: 'absolute',   // Position it at the bottom
+      bottom: 0,              // Start from bottom of the screen
+      left: 0,                // Start from the left of the screen
+      right: 0,               // End at the right of the screen
+      alignItems: 'center',   // Align inner items to the center
+      justifyContent: 'center',// Vertically center the inner content
+      backgroundColor: 'white',  // Background color
+      borderTopLeftRadius: 10,  // Radius
+      borderTopRightRadius: 10, // Radius
+      padding: 10,               // Padding for better spacing
+    },
+  text8: {
+    marginLeft: -29,
+    top: 5,
+    left: "50%",
+    fontSize: 18,
+    lineHeight: 29,
+    color: "black",
+    width: 168,
+    textTransform: "capitalize",
+    textAlign: "left",
+    fontWeight: "600",
+    position: "absolute",
+  },
+  text9: {
+    top: 8,
+    left: "40%",
+    fontSize: 16,
+    lineHeight: 29,
+    color: Color.primary,
+    width: 168,
+    textTransform: "capitalize",
+    textAlign: "left",
+    fontWeight: "600",
+    position: "absolute",
+  },
   responseContainer: {
     alignSelf: 'center',
-    width: '100%',
+    width: '50%',
     justifyContent: 'center',
     // marginTop: '3%',
   },
   buttonContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     position: 'absolute',
     bottom: 0,
     alignSelf: 'center',
     width: '50%',
     margin: '5%',
-  },
+},
+
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -686,7 +746,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
     fontSize: 16,
-    fontFamily: Font.primary,
+    fontFamily: FontFamily.interSemiBold,
     fontWeight: 'bold',
   },
   radioGroup: {
@@ -699,7 +759,6 @@ const styles = StyleSheet.create({
   radioLabel: {
     marginLeft: '2%',
     fontSize: 16,
-    fontFamily: Font.primary,
   },
   radioInput: {
     // marginTop: '2%',

@@ -9,20 +9,23 @@ import {
 import {Modal as MOD, Card} from 'react-native-paper';
 
 import LottieView from 'lottie-react-native';
+import W1 from '../../components/W1';
+import W2 from '../../components/W2';
+import W3 from '../../components/W3';
 
 import WheelOfFortune from '../../components/react-native-wheel-of-fortune';
 import {WIDTH} from '../../utils/Dimension';
-import {Font} from '../../constants/colors/color';
+import { Color, FontFamily, FontSize, Padding, Border } from "../../assets/wheel/GlobalStyles";
 
 const participants = ['', '', '', '', '', ''];
 
 const iconRewards = [
-  {uri: 'http://145.239.166.14:8085/wheel/1.png'},
-  {uri: 'http://145.239.166.14:8085/wheel/lose.png'},
-  {uri: 'http://145.239.166.14:8085/wheel/3.png'},
-  {uri: 'http://145.239.166.14:8085/wheel/loser.png'},
-  {uri: 'http://145.239.166.14:8085/wheel/5.png'},
-  {uri: 'http://145.239.166.14:8085/wheel/lost.png'},
+  {uri: 'https://www.catchy.tn/media/wheel/1.png'},
+  {uri: 'https://www.catchy.tn/media/wheel/lose.png'},
+  {uri: 'https://www.catchy.tn/media/wheel/3.png'},
+  {uri: 'https://www.catchy.tn/media/wheel/loser.png'},
+  {uri: 'https://www.catchy.tn/media/wheel/5.png'},
+  {uri: 'https://www.catchy.tn/media/wheel/lost.png'},
 ];
 
 export class WheelGame extends Component {
@@ -107,7 +110,7 @@ export class WheelGame extends Component {
 
       let index;
       let count = 0;
-      const maxIterations = 10;
+      const maxIterations = 5;
 
       do {
         index = this.getRandomPosition(0, this.state.winAngle.length);
@@ -303,7 +306,7 @@ export class WheelGame extends Component {
         },
       };
       let loyaltyPoints = await fetch(
-        `http://145.239.166.14:8082/user/${token}`,
+        `http://94.237.82.88:8082/user/${token}`,
         requestOptions,
       );
       let response = loyaltyPoints.json();
@@ -357,14 +360,12 @@ export class WheelGame extends Component {
     const wheelOptions = {
       rewards: participants,
       knobSize: 30,
-      borderWidth: 5,
-      borderColor: '#fff',
-      innerRadius: 30,
+      borderWidth: 1,
+      innerRadius: 50,
+      
       duration: 6000,
-      knobSource: require('../../assets/wheel/knob.png'),
-      borderColor: '#E3A85E',
-      backgroundColor: '#353b48',
-      sizeIconReward: 70,
+      knobSource: require('../../assets/wheel/knob1.png'),
+      sizeIconReward: 80,
       iconRewards: iconRewards,
       onRef: ref => (this.child = ref),
     };
@@ -372,16 +373,15 @@ export class WheelGame extends Component {
     return (
       <View style={{flex: 1}}>
         <View style={styles.centeredView}>
-          <ImageBackground
-            source={{
-              uri: 'https://img.lovepik.com/photo/40111/5401.jpg_wh860.jpg',
-            }}
-            style={{
-              width: '100%',
-              height: '100%',
-              flex: 1,
-              justifyContent: 'center',
-            }}>
+          
+        <ImageBackground
+    source={require('../../assets/wheel/roue.png')}
+    style={{
+        width: '100%',
+        height: '100%',
+        flex: 1,
+        justifyContent: 'center',
+    }}>
             {!modalVisible ? (
               <>
                 <View style={styles.modalView}>
@@ -414,31 +414,19 @@ export class WheelGame extends Component {
                 <TouchableOpacity
                   onPress={() => this.buttonPress()}
                   style={{
-                    backgroundColor: '#e1b12c',
-                    width: WIDTH / 3,
-                    borderRadius: 30,
-                    marginTop: 20,
-                    shadowColor: '#000',
-                    shadowOffset: {
-                      width: 0,
-                      height: 2,
-                    },
-                    shadowOpacity: 0.25,
-                    shadowRadius: 3.84,
-
-                    elevation: 5,
-                    borderWidth: 0.5,
+                   
                     borderColor: '#e1b12c',
                     alignSelf: 'center',
                   }}>
                   <Text
                     style={{
                       textAlign: 'center',
-                      letterSpacing: 1.2,
-                      fontFamily: Font.primary,
-                      fontSize: 24,
+                      fontFamily: FontFamily.poppinsSemiBold,
+                      fontSize: 20,
+                      fontWeight: "800",
+                      top: 'auto',
                     }}>
-                    Lance
+                    Tourne
                   </Text>
                 </TouchableOpacity>
               </>
@@ -452,109 +440,11 @@ export class WheelGame extends Component {
                     overflow: 'hidden',
                   }}>
                   {!isWinner ? (
-                    <View
-                      style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        margin: '8%',
-                      }}>
-                      <LottieView
-                        source={require('../../assets/animated/you-lose.json')}
-                        autoPlay
-                        loop
-                        style={{
-                          width: '40%',
-                          aspectRatio: 1,
-                        }}
-                      />
-                      <Text style={{textAlign: 'center'}}>
-                        Vous avez perdu essayer dans nos prochaine evennement
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => this.props.closeModal()}
-                        style={{
-                          backgroundColor: '#e1b12c',
-                          width: WIDTH / 3,
-                          borderRadius: 30,
-                          marginTop: 20,
-                          shadowColor: '#000',
-                          shadowOffset: {
-                            width: 0,
-                            height: 2,
-                          },
-                          shadowOpacity: 0.25,
-                          shadowRadius: 3.84,
+                    <W3 />
 
-                          elevation: 5,
-                          borderWidth: 0.5,
-                          borderColor: '#e1b12c',
-                          alignSelf: 'center',
-                        }}>
-                        <Text
-                          style={{
-                            textAlign: 'center',
-                            letterSpacing: 1.2,
-                            fontFamily: Font.primary,
-                            fontSize: 24,
-                          }}>
-                          O K
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
                   ) : (
-                    <View
-                      style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        margin: '8%',
-                      }}>
-                      <LottieView
-                        source={require('../../assets/animated/winner.json')}
-                        autoPlay
-                        loop
-                        style={{
-                          width: '50%',
-                          aspectRatio: 1,
-                        }}
-                      />
-                      <Text style={{textAlign: 'center'}}>
-                        félicitation vous avez gagner {this.state.userGift.name}
-                      </Text>
-                      <Text style={{textAlign: 'center'}}>
-                        vous serez bientôt contacté par l'administrateur pour
-                        récuperer votre cadeaux
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => this.props.closeModal()}
-                        style={{
-                          backgroundColor: '#e1b12c',
-                          width: WIDTH / 3,
-                          borderRadius: 30,
-                          marginTop: 20,
-                          shadowColor: '#000',
-                          shadowOffset: {
-                            width: 0,
-                            height: 2,
-                          },
-                          shadowOpacity: 0.25,
-                          shadowRadius: 3.84,
+                    <W1 giftName={this.state.userGift.name} />
 
-                          elevation: 5,
-                          borderWidth: 0.5,
-                          borderColor: '#e1b12c',
-                          alignSelf: 'center',
-                        }}>
-                        <Text
-                          style={{
-                            textAlign: 'center',
-                            letterSpacing: 1.2,
-                            fontFamily: Font.primary,
-                            fontSize: 24,
-                          }}>
-                          O K
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
                   )}
                 </Card>
               </View>
@@ -569,6 +459,7 @@ export class WheelGame extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
     backgroundColor: '#dfe6e9',
   },
   startButtonView: {
@@ -615,22 +506,16 @@ const styles = StyleSheet.create({
     flex: 0.5,
     alignSelf: 'center',
     width: '90%',
-
+    top: -30,
     margin: 2,
     // backgroundColor: '#f1f2f6',
-    borderRadius: 20,
     padding: 35,
     alignItems: 'center',
-    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
     elevation: 5,
-    borderWidth: 0.5,
-    borderColor: '#eee',
   },
   modalText: {
     marginBottom: 15,

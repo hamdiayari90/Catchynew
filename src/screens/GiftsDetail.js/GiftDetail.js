@@ -16,20 +16,19 @@ export const GiftDetail = ({item, userPoint}) => {
       // }}
     >
       <View style={{flexDirection: 'row'}}>
-        <View style={{width: '100%'}}>
+        <View style={{width: '50%'}}>
           <Card.Cover
             source={{uri: `data:image/png;base64,${item.image.picByte}`}}
             resizeMode="center"
             style={{
-              width: '60%',
+              width: '100%',
               height: '100%',
               backgroundColor: '#fff',
-              marginLeft:'10%'
             }}></Card.Cover>
         </View>
         <View style={styles.detailGiftContainer}>
           <View style={styles.priceContainer}>
-            <Text style={styles.price}>{item.price} DT</Text>
+            <Text style={styles.price}>{item.price} Points</Text>
             <View style={styles.nameContainer}>
               <Text style={styles.name}>{item.name}</Text>
             </View>
@@ -39,14 +38,11 @@ export const GiftDetail = ({item, userPoint}) => {
             style={styles.voirDetailContainer}
             onPress={() => navigation.navigate('OneProduct', {data: item, userInfo : {
               loyaltyPoints : userPoint
-            }})}
-            >
+            }})}>
             <Button
               mode="contained"
-              color='#5669FF'
-              style={{borderRadius:20}}
-              >
-              <Text style={{fontWeight:700,fontSize:12,textTransform:'capitalize'}}>Acheter</Text>
+              color={Color.primary}>
+              voir detail
             </Button>
           </Pressable>
         </View>
@@ -68,7 +64,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 3.05,
     elevation: 4,
-    height: HEIGHT / 5.5,
+    height: HEIGHT / 5,
     overflow: 'hidden',
     borderRadius: 10,
   },
@@ -81,17 +77,17 @@ const styles = StyleSheet.create({
     marginTop: '3%',
   },
   price: {
-    fontSize: 12,
-    color: '#5669FF',
-    fontWeight: 700,
+    fontSize: 18,
+    color: Color.primary,
+    fontWeight: 'bold',
   },
   nameContainer: {
     marginTop: '1%',
   },
   name: {
-    fontSize: 18,
+    fontSize: 14,
     color: '#000',
-    fontWeight: 700,
+    fontWeight: 'bold',
   },
   voirDetailContainer: {
     alignItems: 'flex-end',

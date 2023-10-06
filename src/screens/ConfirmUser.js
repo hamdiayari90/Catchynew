@@ -17,6 +17,7 @@ import {WIDTH, HEIGHT} from '../utils/Dimension';
 import {CodeInput} from '../components/CodeInput/CodeInput';
 import {verifyIsSignedIn, userToken} from '../atom/auth';
 import { Font } from '../constants/colors/color';
+
 const VerifyCode = props => {
   useEffect(() => {
     requestNotifications();
@@ -114,21 +115,18 @@ const VerifyCode = props => {
 };
 export default VerifyCode;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  backgroundImage: {
-    width: WIDTH,
-    height: HEIGHT,
-    resizeMode: 'cover',
-  },
+
+
   textContainer: {
     marginTop: '2%',
+  },
+  Container: {
+    backgroundColor: "white",
   },
   textStyle: {
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-    fontFamily: Font.primary,
+
   },
 });

@@ -39,7 +39,7 @@ export default function SMSHelper({navigation}) {
               if (res.data) {
                 navigation.navigate('VerifyCode', {email: values.email});
               } else {
-                Alert.alert('adresse email inéxistante');
+                Alert.alert('adresse email inÃ©xistante');
               }
             }
           })
@@ -55,19 +55,18 @@ export default function SMSHelper({navigation}) {
         <Icon name="arrow-back" size={24} color="#333" />
       </TouchableOpacity>
       <View style={styles.container}>
-        <Text style={styles.title}>Réinitialiser le mot de passe</Text>
+        <Text style={styles.title}>Verification</Text>
         <Text style={styles.subTitle}>
-          entrez le code de vérification S'il vous plait {'\n'}
-          nous envoyons à votre adresse e-mail
+          entrez le code de vÃ©rification S'il vous plait {'\n'}
+          nous envoyons Ã  votre adresse e-mail
         </Text>
 
         <View style={{paddingHorizontal: 32, marginBottom: 16, width: '100%'}}>
           <TextInput
-            mode='outlined'
             ref={email}
             icon="lock"
             value={values.username}
-            placeholder="foulen@foulen.com"
+            placeholder="Entrez votre email "
             autoCapitalize="none"
             keyboardAppearance="dark"
             returnKeyType="next"
@@ -76,10 +75,9 @@ export default function SMSHelper({navigation}) {
             onBlur={handleBlur('email')}
             error={errors.email}
             touched={touched.email}
-            left={<TextInput.Icon name="email" color="#AAAAAA" />}
+            left={<TextInput.Icon name="email" />}
             onSubmitEditing={() => handleSubmit()}
             activeUnderlineColor="green" //when this TextInput is active, change its accent color to green
-            activeOutlineColor="#5568FD"
           />
           <ErrorMessage errorValue={touched.email && errors.email} />
         </View>
@@ -99,16 +97,16 @@ export default function SMSHelper({navigation}) {
                 paddingRight: '4%',
                 fontSize: 18,
               }}>
-              ENVOYER
+              Envoyer
             </Text>
-            <View style={{backgroundColor: '#495EED', borderRadius: 30,alignSelf:'center'}}>
+            <View style={{backgroundColor: 'blue', borderRadius: 30}}>
               <AntDesign name="arrowright" color="white" size={22} />
             </View>
           </View>
         </TouchableOpacity>
         <View style={styles.goBackContainer}>
           <Text>
-            retourner à la page de{' '}
+            retourner Ã  la page de{' '}
             <Text
               style={styles.connectionTExt}
               onPress={() => navigation.goBack(null)}>
@@ -131,19 +129,19 @@ const styles = StyleSheet.create({
     marginTop: '15%',
   },
   title: {
+    paddingTop: 20,
     color: '#000',
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: '700',
     textAlign: 'center',
+    paddingBottom: 20,
   },
 
   subTitle: {
-    paddingTop: 10,
+    paddingTop: 30,
     color: '#000',
-    textAlign: 'left',
+    textAlign: 'center',
     marginBottom: 20,
-    marginLeft:32,
-    width:'80%'
   },
   nextButton: {
     justifyContent: 'center',
@@ -164,12 +162,12 @@ const styles = StyleSheet.create({
   },
   connectionTExt: {
     fontWeight: 'bold',
-    color: '#5669FF',
+    color: Color.tertiary,
   },
   customButton: {
     borderRadius: 8,
-    width: WIDTH / 1.5,
-    backgroundColor: '#F2583E',
+    width: WIDTH / 2,
+    backgroundColor: '#0984e3',
     alignSelf: 'center',
     height: HEIGHT / 14,
     justifyContent: 'center',

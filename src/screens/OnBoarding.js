@@ -1,180 +1,184 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, View, StyleSheet, TouchableOpacity, Image, Text, } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useState, useEffect, useRef, useCallback, memo} from 'react';
+import { Image, StyleSheet, Text, View, Pressable, Platform,} from "react-native";
+import { FontSize, Padding, Border, FontFamily, Color } from "../../GlobalStyles";
+import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 
-export default function OnBoarding ({navigation}) {
+const Onboarding =   () => {
+  const navigation = useNavigation();
 
-  useEffect(() => {
-    async function isAlreadyLaunched(){
-      let alReadyLanched = await AsyncStorage.getItem('alReadyLanched');
-      alReadyLanched = alReadyLanched != null ? JSON.parse(alReadyLanched) : null
-      if(alReadyLanched == 'alReadyLanched'){
-        navigation.navigate('Login');
-      }
-    }
-    isAlreadyLaunched();
-  }, []);
-
-  const [currentStep, setCurrentStep,] = useState(0);
-  const steps = [
-    { title: 'Découvrez les événements à venir et à proximité', description: 'découvrez et gagnez des points de récompenses convertibles' },
-    { title: 'Suivez vos évènementsur la calendrier ', description: 'Ne jamais rater vos évènements à venir' },
-    { title: "Rechercher plus d'événements à proximité par carte", description: "rechercher plus d'événements ou d'activités à proximité par carte" },
-  ];
-
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
-    else{
-      AsyncStorage.setItem('alReadyLanched', JSON.stringify('alReadyLanched'));
-      navigation.navigate('Login');
-    }
-  };
-
-  const handlePrevious = () => {
-    // if (currentStep > 0) {
-    //   setCurrentStep(currentStep - 1);
-    // }
-    AsyncStorage.setItem('alReadyLanched', JSON.stringify('alReadyLanched'));
+  const goToOnboardingECatalogue = () => {
     navigation.navigate('Login');
   };
-  const isStep2Active = currentStep === 1;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {currentStep === 0 && (
-        <View style={styles.stepsCount}>
-          <View style={styles.onBoardingBanner}>
-            <Image source={require('../assets/design/onboarding1.jpg')} style={styles.bannerImageStyle} />
+    <Pressable
+      style={styles.onboardingWinconvert}
+    >
+      <Image
+        style={styles.onboardingWinconvertChild}
+        resizeMode="cover"
+        source={require("../assets/ellipse-56.png")}
+      />
+      <View style={styles.frameParent}>
+        <View style={styles.frameFlexBox}>
+          <View>
+            <Text style={styles.gagneEtConvertie}>{`Gagne et converti(e)
+tes points`}</Text>
+            <Text
+              style={[styles.text, styles.textTypo]}
+            >{`Avec Catchous joue,gagne et recupère 
+les points de ton panier, pour les échanger  contre des cadeaux`}</Text>
           </View>
         </View>
-      )}
-      {currentStep === 1 && (
-        <View style={styles.stepsCount}>
-        <View style={styles.onBoardingBanner}>
-          <Image source={require('../assets/design/onboarding2.jpg')} style={styles.bannerImageStyle} />
-        </View>
-      </View>
-      )}
-      {currentStep === 2 && (
-        <View style={styles.stepsCount}>
-        <View style={styles.onBoardingBanner}>
-          <Image source={require('../assets/design/onboarding3.jpg')} style={styles.bannerImageStyle} />
-        </View>
-      </View>
-      )}
-      <View style={[styles.boardingStepChange, isStep2Active && styles.activeStepTwo]}>
-        <View style={styles.boardingStepChangeContainer}>
-          <Text style={styles.boardingSlidesHeading}>{steps[currentStep].title}</Text>
-          <Text style={styles.boardingSlidesDesc}>{steps[currentStep].description}</Text>
-          <View style={styles.stepsButtons}>
-            <TouchableOpacity
-              style={styles.stepsControlButton}
-              onPress={handlePrevious}
-            >
-              <Text style={styles.stepsControlButtonText}>Ignorer</Text>
-            </TouchableOpacity>
-            <View style={styles.dotsContainer}>
-              <View style={[styles.dots, { opacity: currentStep=== 0 ? 1 : 0.2 }]}></View>
-              <View style={[styles.dots, { opacity: currentStep=== 1 ? 1 : 0.2 }]}></View>
-              <View style={[styles.dots, { opacity: currentStep=== 2 ? 1 : 0.2 }]}></View>
+        <View style={[styles.frameGroup, styles.frameFlexBox]}>
+          <View style={styles.frameContainer}>
+            <View style={styles.ellipseParent}>
+              <Image
+                style={styles.frameLayout}
+                resizeMode="cover"
+                source={require("../assets/ellipse-59.png")}
+              />
+              <Image
+                style={[styles.frameItem, styles.frameLayout]}
+                resizeMode="cover"
+                source={require("../assets/ellipse-58.png")}
+              />
+              <Image
+                style={[styles.frameItem, styles.frameLayout]}
+                resizeMode="cover"
+                source={require("../assets/ellipse-59.png")}
+              />
             </View>
-            <TouchableOpacity
-              style={styles.stepsControlButton}
-              onPress={handleNext}
-            >
-              <Text style={styles.stepsControlButtonText}>Suivant</Text>
-            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonsParent}>
+            
+  <View style={styles.buttonsFlexBox}
+  onPress={goToOnboardingECatalogue}    >
+    <Text style={[styles.text1, styles.textTypo]}>Passer</Text>
+   
+  </View>
+  <Pressable
+    style={[styles.buttons1, styles.buttonsFlexBox]}
+    onPress={goToOnboardingECatalogue}    >
+    <Text style={[styles.text2, styles.textTypo]}>Suivant</Text>
+    <Image
+      style={styles.icons}
+      resizeMode="cover"
+      source={require("../assets/icons7.png")}
+    />
+  </Pressable>
+
           </View>
         </View>
       </View>
-    </ScrollView>
+      <LottieView
+            source={require('../assets/animated/bording2.json')}
+            autoPlay
+            loop
+            style={styles.onboardingWinconvertItem}
+            /> 
+    </Pressable>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  onBoardingBanner: {
-    width: "100%",
-    flex: 1,
+  textTypo: {
+    lineHeight: 24,
+    fontSize: FontSize.customButton1_size,
+    textAlign: "left",
   },
-  bannerImageStyle:{
-    width: "100%",
-    aspectRatio: 1,
-    height: "100%",
-    maxHeight: 480,
-    aspectRatio: 'auto',
-    resizeMode: 'cover'
-  },
-  container: {
-    backgroundColor: '#fff',
-    flex: 1,
-  },
-  activeStepTwo: {
-    backgroundColor: '#F2583E',
-  },
-  boardingStepChangeContainer: {
-    width: "100%",
-    flex: 1,
-    position: "relative",
-  },
-  stepsButtons: {
-    flexDirection: 'row',
-    justifyContent: "space-between",
-    position: "absolute",
-    width: "100%",
-    bottom: 10,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    paddingTop: 20
-  },
-  stepsControlButtonText: {
-    fontWeight: 700,
-    fontSize: 18,
-    lineHeight: 34,
-    color: '#FFFFFF',
-  },
-  stepsCount: {
-    width: '100%',
-    flex: 1,
-    alignItems: 'center',
-  },
-  dotsContainer: {
+
+
+
+  buttonsFlexBox: {
+    paddingVertical: Padding.p_xs,
+    paddingHorizontal: Padding.p_base,
+    height: 48,
+    borderRadius: Border.br_21xl,
     flexDirection: "row",
-    columnGap: 10
+    justifyContent: "center",
+    alignItems: "center",
   },
-  dots: {
-    height: 5,
-    width: 5,
-    borderRadius: 50,
-    backgroundColor: "#fff",
-    opacity: ".2",
+  onboardingWinconvertChild: {
+    top: -230,
+    right: -210,
+    width: 743,
+    height: 550,
+    position: "absolute",
   },
-  boardingStepChange: {
+  gagneEtConvertie: {
+    fontSize: FontSize.size_5xl,
+    lineHeight: 36,
+    fontFamily: FontFamily.poppinsBold,
+    width: 326,
+    textAlign: "left",
+    color: Color.black,
+    fontWeight: "700",
+  },
+  text: {
+    fontFamily: FontFamily.customBody1,
+    color: Color.grey,
+    marginTop: 16,
+    width: 320,
+  },
+  frameItem: {
+    marginLeft: 4,
+  },
+  ellipseParent: {
+    flexDirection: "row",
+  },
+  frameContainer: {
+    alignItems: "center",
+  },
+  text1: {
+    fontFamily: FontFamily.customButton1,
+    color: Color.black,
+    fontWeight: "700",
+    lineHeight: 24,
+    fontSize: FontSize.customButton1_size,
+  },
+  text2: {
+    fontWeight: "600",
+    fontFamily: FontFamily.interSemiBold,
+    color: Color.primary,
+  },
+  icons: {
+    width: 24,
+    height: 24,
+    marginLeft: 4,
+  },
+  buttons1: {
+    backgroundColor: Color.black,
+  },
+  buttonsParent: {
+    justifyContent: "space-between",
+    marginTop: 45,
+    flexDirection: "row",
+    width: 320,
+  },
+ 
+  frameParent: {
+    top: '60%',
+    left: 30 ,
+    width: 300,
+    position: "absolute",
+  },
+  onboardingWinconvertItem: {
+    marginLeft: -220,
+    top: -30,
+    left: "50%",
+    width: 440,
+    height: 440,
+    position: "absolute",
+  },
+  onboardingWinconvert: {
+    backgroundColor: Color.white,
+    flex: 1,
     width: "100%",
-    height: 288,
-    backgroundColor: '#5669FF',
-    borderTopRightRadius: 48,
-    borderTopLeftRadius: 48,
-    position: 'absolute',
-    padding: 35,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  boardingSlidesHeading: {
-    textAlign: 'center',
-    fontWeight: 700,
-    fontSize: 22,
-    lineHeight: 34,
-    color: '#FFFFFF',
-  },
-  boardingSlidesDesc: {
-    textAlign: 'center',
-    fontWeight: 700,
-    fontSize: 15,
-    lineHeight: 25,
-    color: '#FFFFFF',
+    height: 800,
+    overflow: "hidden",
   },
 });
+
+export default Onboarding;

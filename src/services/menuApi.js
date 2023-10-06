@@ -9,7 +9,7 @@
         },
       };
       let loyaltyPoints = await fetch(
-        `http://145.239.166.14:8082/user/${token}`,
+        `http://94.237.82.88:8082/user/${token}`,
         requestOptions,
       );
       let data = loyaltyPoints.json();

@@ -6,6 +6,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Alert, Linking, LogBox} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import {ErrorScreen} from './src/screens/NoInternet/Error';
+import { NavigationContainer } from '@react-navigation/native';
+import { DarkModeProvider } from './DarkModeContext';
+
+
 import notifee, {
   AndroidColor,
   AndroidStyle,
@@ -114,6 +118,8 @@ function App() {
           priority: 'high',
         },
       });
+      await AsyncStorage.setItem('hasNotification', 'true');
+
     });
     return () => {
       unsubscribe();
@@ -240,22 +246,25 @@ function App() {
 
   return (
     <GestureHandlerRootView style={{flex: 1, flexGrow: 1}}>
-      {intenet ? (
-        <>
-          {/* {!isFirstLanch ? ( */}
-          <Navigator />
-          {/* ) : (
-            <OnboardingScreen
-              setIsFirstLanch={setIsFirstLanch}
-              checkFirstLanch={checkFirstLanch}
-            />
-          )} */}
-        </>
-      ) : (
-        <ErrorScreen />
-      )}
+        <DarkModeProvider>
+            {intenet ? (
+                <>
+                    {/* Uncomment below if you plan to reintegrate the onboarding screen logic in the future */}
+                    {/* {!isFirstLanch ? ( */}
+                        <Navigator />
+                    {/* ) : (
+                        <OnboardingScreen
+                            setIsFirstLanch={setIsFirstLanch}
+                            checkFirstLanch={checkFirstLanch}
+                        />
+                    )} */}
+                </>
+            ) : (
+                <ErrorScreen />
+            )}
+        </DarkModeProvider>
     </GestureHandlerRootView>
-  );
+);
 }
 
 export default App;

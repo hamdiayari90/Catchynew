@@ -1,41 +1,71 @@
 {
   "project_info": {
-    "project_number": "907020757376",
-    "project_id": "catchy-98878",
-    "storage_bucket": "catchy-98878.appspot.com"
+    "project_number": "717122551024",
+    "project_id": "catchy-b3bcf",
+    "storage_bucket": "catchy-b3bcf.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:907020757376:android:9c4436e1667827d382f965",
+        "mobilesdk_app_id": "1:717122551024:android:71750566d391c8f52ed635",
         "android_client_info": {
-          "package_name": "com.notifexample"
+          "package_name": "com.catchous.catchy"
         }
       },
       "oauth_client": [
         {
-          "client_id": "907020757376-g9g58una3fknr6lrb365gvcieophj0bp.apps.googleusercontent.com",
+          "client_id": "717122551024-53e9rahfktkbviik3l34t3v6acut6ihq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC2x9JZmLRdRcAR0HVkLtgIBnlbmM5TRpM"
+          "current_key": "AIzaSyAQo21PgWVPKMRjydtrZyNU27URTxVjjzQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "907020757376-g9g58una3fknr6lrb365gvcieophj0bp.apps.googleusercontent.com",
+              "client_id": "717122551024-53e9rahfktkbviik3l34t3v6acut6ihq.apps.googleusercontent.com",
               "client_type": 3
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717122551024:android:0f65053a74b3da0c2ed635",
+        "android_client_info": {
+          "package_name": "com.catchycatchous"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "717122551024-5hcq1lnho65qkdtc110su8qorqcvqb5a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.catchycatchous",
+            "certificate_hash": "139b0ec1221caf31434f813103b4b27cc682ee61"
+          }
+        },
+        {
+          "client_id": "717122551024-53e9rahfktkbviik3l34t3v6acut6ihq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQo21PgWVPKMRjydtrZyNU27URTxVjjzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
             {
-              "client_id": "907020757376-4u8utc3r1pv4ea3067uho1lsuj2sfed1.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.notifexampletde"
-              }
+              "client_id": "717122551024-53e9rahfktkbviik3l34t3v6acut6ihq.apps.googleusercontent.com",
+              "client_type": 3
             }
           ]
         }

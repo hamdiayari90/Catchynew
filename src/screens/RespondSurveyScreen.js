@@ -229,58 +229,15 @@ export default function ResponseSurveyScreen(props) {
   /* --------------- */
   function SurveyQuestion(props) {
     return (
-      <Box
-        width={WIDTH}
-        bg="#d4b7eb"
-        style={styles.questionBox}
-        p={4}
-        shadow={4}
-        _text={{
-          fontSize: "xs",
-          fontWeight: "bold",
-        }}
-      >
-        <Text
-          style={{
-            fontFamily: Font.primary,
-            letterSpacing: 1.2,
-            fontWeight: "bold",
-          }}
-        >
-          {props.question.title}
-        </Text>
-      </Box>
+        <Text>{props.question.title}</Text>
     );
-  }
+}
 
-  const SurveyQuestionChoices = (props) => {
-    const getChoiceComponent = () => {
-      switch (props.type) {
-        case "TEXT":
-          return (
-            <TextChoice
-              setConfirm={setConfirm}
-              index={index}
-              survey={survey}
-              choices={props.choices}
-            />
-          );
-
-        case "RADIO":
-          return <RadioChoice choices={props.choices} />;
-
-        case "CHECKBOX":
-          return <CheckboxChoice choices={props.choices} />;
-      }
-      return null;
-    };
-
-    return (
-      <Box width="90%" bg="#d4b7eb" style={styles.choicesBox} p={4}>
-        <ScrollView>{getChoiceComponent()}</ScrollView>
-      </Box>
-    );
-  };
+const SurveyQuestionChoices = (props) => {
+  return (
+      <Text>{props.choices}</Text>
+  );
+};
 
   // ****************************************************************************************************************************
   // ****************************************************************************************************************************
@@ -425,6 +382,7 @@ export default function ResponseSurveyScreen(props) {
                 <SurveyQuestionChoices
                   choices={survey.questions[index].choices}
                   type={survey.questions[index].type}
+                  
                 />
                 <Button.Group
                   style={styles.prevNextBtns}
@@ -466,9 +424,12 @@ export default function ResponseSurveyScreen(props) {
               </>
             )}
           </View>
+          
         )}
       </SafeAreaView>
+      
     </NativeBaseProvider>
+    
   );
 }
 
@@ -488,10 +449,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     backgroundColor: Color.primary,
-    height: HEIGHT / 6,
-    // marginVertical: 10,
-    width: WIDTH - 50,
-    borderWidth: 0.5,
+    height: ("HEIGHT / 9"),
+    width: WIDTH - 10,
+    borderWidth: 1.5,
     borderColor: "#ffaf40",
   },
   choicesBox: {
@@ -499,6 +459,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: WIDTH - 50,
     backgroundColor: "#cd84f1",
+    // ... add maxHeight for scrollable box ...
+    maxHeight: HEIGHT - 300,
   },
   prevNextBtns: {
     position: "absolute",

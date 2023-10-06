@@ -14,7 +14,7 @@ export const getAllProduct = async ()=> {
         },
       };
       let products = await fetch(
-        `http://145.239.166.14:8082/products`,
+        `http://94.237.82.88:8082/products`,
         requestOptions,
       );
       let allproducts = products.json();
@@ -38,7 +38,7 @@ export const getAllNotification = async (id)=> {
       },
     };
     let products = await fetch(
-      `http://145.239.166.14:8082/notifications/user/${id}`,
+      `http://94.237.82.88:8082/notifications/user/${id}`,
       requestOptions,
     );
     let allproducts = products.json();
@@ -62,7 +62,7 @@ export const fetchUSerInforamtion = async token => {
       },
     };
     let loyaltyPoints = await fetch(
-      `http://145.239.166.14:8082/user/${token}`,
+      `http://94.237.82.88:8082/user/${token}`,
       requestOptions,
     );
     let response = loyaltyPoints.json();

@@ -36,13 +36,18 @@ const LoginSchema = Yup.object().shape({
 export default function NewPassword(props) {
   const [checkStatus, setCheckStatus] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(true);
-
+  useEffect(() => {
+    console.log("Mounted or updated NewPassword with props:", props);
+  }, []);
   const navigation = props.navigation;
+  console.log("Props in NewPassword:", props);
 
   var data = {
-    email: props.route.params.email,
-    // email: 'rmadi@live.fr',
+    email: props.route?.params?.email,
+    
   };
+  console.log("NewPassword props:", props.route.params);
+
   const {
     handleBlur,
     handleSubmit,
@@ -89,8 +94,9 @@ export default function NewPassword(props) {
       >
         <View style={styles.textContainer}>
           <Text style={styles.title}>Reset password</Text>
-
-          <View style={{ paddingHorizontal: 32, marginBottom: 16 }}>
+  
+          {/* ************************ password input *************************** */}
+          <View style={{ paddingHorizontal: 32 }}>
             <TextInput
               ref={password}
               icon="key"
@@ -107,7 +113,7 @@ export default function NewPassword(props) {
               touched={touched.password}
               onSubmitEditing={() => handleSubmit()}
               secureTextEntry={passwordVisible}
-              activeUnderlineColor="green" //when this TextInput is active, change its accent color to green
+              activeUnderlineColor="green" 
               right={
                 <TextInput.Icon
                   name={passwordVisible ? "eye" : "eye-off"}
@@ -118,6 +124,7 @@ export default function NewPassword(props) {
             />
             <ErrorMessage errorValue={touched.password && errors.password} />
           </View>
+  
           {/* ************************ confirm password *************************** */}
           <View style={{ paddingHorizontal: 32 }}>
             <TextInput
@@ -136,7 +143,7 @@ export default function NewPassword(props) {
               touched={touched.confirm_password}
               onSubmitEditing={() => handleSubmit()}
               secureTextEntry={passwordVisible}
-              activeUnderlineColor="green" //when this TextInput is active, change its accent color to green
+              activeUnderlineColor="green"
               right={
                 <TextInput.Icon
                   name={passwordVisible ? "eye" : "eye-off"}
@@ -149,13 +156,16 @@ export default function NewPassword(props) {
               errorValue={touched.confirm_password && errors.confirm_password}
             />
           </View>
-          <View style={styles.nextButton}>
-            <CostumButton title="confirmer" onPress={handleSubmit} />
+          <View style={styles.buttonsWrapper}>
+            <View style={[styles.buttons, styles.buttonsFlexBox]}>
+              <CostumButton title="confirmer" onPress={handleSubmit} />
+            </View>
           </View>
         </View>
       </ImageBackground>
     </SafeAreaView>
   );
+  
 }
 const styles = StyleSheet.create({
   container: {
@@ -210,4 +220,46 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: Font.primary,
   },
+  headerImage: {
+    width: '100%',
+    height: 200
+},
+formContainer: {
+    padding: 20,
+    width: '80%',
+    alignItems: 'center'
+},
+headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20
+},
+inputWrapper: {
+    width: '100%',
+    marginBottom: 20
+},
+labelText: {
+    fontSize: 16,
+    marginBottom: 5
+},
+inputField: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5
+},
+footerSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 20
+},
+footerIcon: {
+    width: 40,
+    height: 40,
+    marginRight: 10
+},
+footerText: {
+    fontSize: 16
+}
 });

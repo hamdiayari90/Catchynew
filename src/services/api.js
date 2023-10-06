@@ -7,7 +7,7 @@ import { baseUrl } from '../atom/responseSurveyState';
 //let API = axios.create({baseURL: 'http://192.168.0.4:8082'});
 //let API = axios.create({baseURL: 'http://192.168.0.8:8082'});
 //let API = axios.create({baseURL: 'http://192.168.0.4:8082'});
-let API = axios.create({baseURL: 'http://145.239.166.14:8082'});
+let API = axios.create({baseURL: 'http://94.237.82.88:8082'});
 let wheelApi = axios.create({baseURL: 'http://145.239.166.14:8086'});
 /*API.interceptors.request.use((req) => {
     if (localStorage.getItem('profile')) {
@@ -24,6 +24,24 @@ export const createUser = newUser => API.post('/user', newUser);
 export const sendToken = token => API.post('/register', token);
 
 export const getGifts = id => API.get(`/products/gifts/${id}`);
+export const uploadProfilePicture = async (userId, imageBase64) => {
+  try {
+    const response = await axios.post(`http://94.237.82.88:8082/addImageToUser/${userId}`, {
+      image: imageBase64,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload profile picture');
+    }
+
+    const responseData = await response.json();
+    console.log('Upload response:', responseData);
+    return responseData;
+  } catch (error) {
+    console.error('Error uploading profile picture:', error);
+    throw error;
+  }
+};
 
 export const getNotifications = data =>
   API.get(`/notifications/user/${data.id}`, {
@@ -146,6 +164,17 @@ export const Storage = {
       let user= jwt_decode(token);
       return user;
     }
+  }
+};
+export const checkEmail = async (email) => {
+  try {
+    const response = await fetch(`http://94.237.82.88:8082/verifMail2/${email}`);
+    const result = await response.json();
+
+    return result; // Returns true if email exists, false otherwise
+  } catch (error) {
+    console.error('Error verifying email:', error);
+    return true; // Default to "exists" if there's an error, to be safe
   }
 };
 

@@ -22,6 +22,7 @@ import React from 'react';
 import {RecoilRoot} from 'recoil';
 import {Provider as PaperProvider} from 'react-native-paper';
 import {Color} from './src/constants/colors/color';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
@@ -49,6 +50,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
       },
     },
   });
+  await AsyncStorage.setItem('hasNotification', 'true');
+
 });
 
 notifee.onBackgroundEvent(async ({type, detail}) => {

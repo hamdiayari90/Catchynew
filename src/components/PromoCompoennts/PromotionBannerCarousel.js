@@ -1,17 +1,10 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native';
 import React from 'react';
-import {Avatar, Button, Card, Title, Paragraph} from 'react-native-paper';
-import {WIDTH} from '../../utils/Dimension';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { WIDTH } from '../../utils/Dimension';
+import { Card } from 'react-native-paper';
 
-export const PromotionBannerCarousel = ({item, navigation, user, promoId}) => {
-
-  const {id, title, points, status, endDate, thumbnail} = item;
+export const PromotionBannerCarousel = ({ item, navigation, user, promoId }) => {
+  const { id, title, points, status, endDate, thumbnail } = item;
 
   return (
     <Card
@@ -25,10 +18,10 @@ export const PromotionBannerCarousel = ({item, navigation, user, promoId}) => {
         },
         shadowOpacity: 0.23,
         shadowRadius: 2.62,
-
         elevation: 4,
-        borderWidth:1
-      }}>
+        borderWidth: 0,
+      }}
+    >
       <TouchableOpacity
         onPress={() =>
           navigation.push('Video', {
@@ -39,23 +32,49 @@ export const PromotionBannerCarousel = ({item, navigation, user, promoId}) => {
             promoId: promoId,
           })
         }
-        
-        >
-        <Card.Cover source={{uri: `data:thumbnail/png;base64,${thumbnail}`}} />
-        <View style={{padding:5, flexDirection:'row', justifyContent:'space-between', marginHorizontal:20}}>
-        <Text>
-          {item.title}
-        </Text>
-        <Text>{item.points} points </Text>
-       
-        {/* <Text
-          style={{fontFamily: 'Sans Serif Thin', fontSize: 14, color: '#000'}}>
-          Vous pouvez regarder cette promo {item.occurrence} fois jusqu'à la fin et gagner des points de fidélité chaque fois.
-          </Text> */}
+      >
+        <View style={styles.thumbnailContainer}>
+          <Image
+            source={{ uri: `data:thumbnail/png;base64,${thumbnail}` }}
+            style={styles.thumbnailImage}
+            resizeMode="cover"
+          />
+          <View style={styles.thumbnailOverlay}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.points}>{item.points} points</Text>
+          </View>
         </View>
       </TouchableOpacity>
     </Card>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  thumbnailContainer: {
+    position: 'relative',
+    height: 200,
+    borderRadius: 15,
+    overflow: 'hidden',
+  },
+  thumbnailImage: {
+    flex: 1,
+    width: '100%',
+    height: undefined,
+  },
+  thumbnailOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 10,
+  },
+  title: {
+    fontSize: 16,
+    color: '#fff',
+  },
+  points: {
+    fontSize: 14,
+    color: '#fff',
+  },
+});

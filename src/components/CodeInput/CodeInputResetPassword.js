@@ -110,10 +110,11 @@ const navigation = useNavigation()
       <TouchableOpacity onPress={()=> navigation.navigate('Login')}>
         <Icon name="arrow-back" size={24} color="#333" />
       </TouchableOpacity>
-      <Text style={{fontSize:24,fontWeight:700,marginTop:25}}>Verification</Text>
-      <Text style={{fontSize:15,fontWeight:700,marginTop:10}}>
-        Nous vous avons envoyé le code de vérification a votre email
+      <Text style={styles.title}>Verification</Text>
+      <Text style={styles.subTitle}>
+        Nous vous avons envoyé le code de vérification
       </Text>
+      <Text style={styles.subTitle}>a votre email</Text>
 
       <CodeField
         ref={ref}
@@ -129,7 +130,7 @@ const navigation = useNavigation()
       <TouchableOpacity
         onPress={() => {
           if (value.length == 6) {
-            sendCode(value);
+            navigation.navigate('NewPassword');
           }else {
             Alert.alert('', "code invalide")
           }
@@ -149,16 +150,16 @@ const navigation = useNavigation()
               paddingRight: '4%',
               fontSize: 18,
             }}>
-            CONTINUR
+            Continuer
           </Text>
-          <View style={{backgroundColor: '#495EED', borderRadius: 30,alignSelf:'center'}}>
+          <View style={{backgroundColor: 'blue', borderRadius: 30}}>
             <AntDesign name="arrowright" color="white" size={22} />
           </View>
         </View>
       </TouchableOpacity>
 
       <View style={{marginTop: '3%', justifyContent: 'center'}}>
-        <Text style={{color:'#5669FF',alignSelf:'center',fontWeight:700}} onPress={() => resend_code()}>
+        <Text style={styles.nextButtonText} onPress={() => resend_code()}>
           renvoyer le code ?
         </Text>
       </View>

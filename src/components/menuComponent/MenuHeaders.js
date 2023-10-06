@@ -1,3 +1,4 @@
+import { Color, FontSize, FontFamily, Border, Padding } from "../../assets/home2/GlobalStyles";
 import {
   StyleSheet,
   Text,
@@ -8,17 +9,20 @@ import {
   Linking,
   TouchableOpacity,
   TextInput,
+  FlatList ,
   BackHandler 
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
+import { DarkModeProvider, DarkModeContext } from '../../../DarkModeContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 import {fetchUSerInforamtion} from '../../services/homePageApi/home';
-import {Color, Font} from '../../constants/colors/color';
 import {useNavigation} from '@react-navigation/native';
 import {useRecoilState} from 'recoil';
 import {globlalUSerInfo, userInfomation} from '../../atom/auth';
+import axios from 'axios';
+import FilterScreen from '../../screens/FilterScreen'; // Import your FilterScreen component
 import {
   currentContry,
   currentContryCode,
@@ -36,13 +40,10 @@ import {
   requestLocationAccuracy,
   request,
   PERMISSIONS,
-} from 'react-native-permissions';
-
-export const MenuHeaders = ({hide = true, title = ''}) => {
-  useEffect(() => {
-    getUserInformation();
-  }, [navigation]);
-
+} 
+from 'react-native-permissions';
+export const MenuHeaders = ({ hide = true, title = '' }) => {
+  const { isDarkMode, toggleDarkMode } = React.useContext(DarkModeContext);
   const navigation = useNavigation();
   const [user, setUSer] = useRecoilState(userInfomation);
   const [userData, setUserData] = useRecoilState(globlalUSerInfo);
@@ -52,27 +53,134 @@ export const MenuHeaders = ({hide = true, title = ''}) => {
   const [locationMaps, setLocationMaps] = useRecoilState(locationState);
   const [notificationEnabled, setNotificationsEnabled] = useState(false);
   const [locationEnabled, setLicationEnabled] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(''); // Renamed to 'searchTerm'
+  const [searchResults, setSearchResults] = useState([]);
+  const [hasNotification, setHasNotification] = useState(false);
+  useEffect(() => {
+    const checkNotification = async () => {
+      const value = await AsyncStorage.getItem('hasNotification');
+      if (value === 'true') {
+        setHasNotification(true);
+        // Optionally reset the value in AsyncStorage
+        await AsyncStorage.setItem('hasNotification', 'false');
+      }
+    };
 
+    checkNotification();
+  }, []);
+  // Simulating a notification coming in after 5 seconds for demonstration purposes
+  setTimeout(() => {
+    setHasNotification(true);
+  }, 50000);
+  useEffect(() => {
+    getUserInformation();
+  }, []);
+
+
+   
+  const UserProfile = ({ navigation }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+  
+
+  };
+  const PartnerProductSearch = () => {
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+  
+    useEffect(() => {
+      if (searchTerm.length > 0) {
+        const delay = setTimeout(() => {
+          handleSearch();
+        }, 500); // Add a delay of 500ms to avoid frequent API calls while typing
+        return () => clearTimeout(delay);
+      }
+    }, [searchTerm]);
+  
+    const handleSearch = async () => {
+      setLoading(true);
+      setError(null);
+  
+      try {
+        const response = await axios.get(
+          `http://94.237.82.88:8082/partner-products/${searchTerm}`
+        );
+        const products = response.data;
+  
+        console.log('Fetched products:', products);
+        setSearchResults(products);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setError('Error fetching products. Please try again later.');
+        setLoading(false);
+      }
+    };
+  
+    const handleSearchTermChange = (query) => {
+      setSearchTerm(query);
+    };
+};
+const [imageUrl, setImageUrl] = useState(null);
+
+  useEffect(() => {
+    fetchUserData(); // Call the function to fetch user data
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const result = await AsyncStorage.getItem('profile');
+      if (result !== null) {
+        const parsedToken = JSON.parse(result);
+        const token = jwt_decode(parsedToken);
+        const userId = token.id;
+        await fetchProfileImage(userId);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const fetchProfileImage = async (userId) => {
+    try {
+      console.log('Fetching profile image...');
+      const response = await fetch(`http://94.237.82.88:8082/user/${userId}/`);
+      const data = await response.json();
+
+      if (data && data.image && data.image.name) {
+        const baseUrl = 'https://www.catchy.tn/media/user/';
+        const imageName = data.image.name;
+        const imageUrl = baseUrl + imageName;
+        console.log('Profile image fetched successfully:', imageUrl);
+        setImageUrl(imageUrl);
+
+      } else {
+        console.error('Error fetching profile image: Invalid response data');
+      }
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+    }
+  };
+  
   const showPromptNotification = async () => {
     try {
       const permissionStatus = await checkNotifications();
 
       if (permissionStatus.status === RESULTS.GRANTED) {
-        setNotificationsEnabled(() => true);
+        setNotificationsEnabled(true);
       } else {
-        setNotificationsEnabled(() => false);
+        setNotificationsEnabled(false);
       }
     } catch (error) {
-      setNotificationsEnabled(() => false);
+      setNotificationsEnabled(false);
     }
   };
-  // ********************************************************************
-  // **   ##******************************************************##   **
-  // *  ### *************** GET User Information   *************** ###  *
-  // **   ##******************************************************##   **
-  // ********************************************************************
-  const [searchQuery, setSearchQuery] = useState('');
-  const onChangeSearch = query => setSearchQuery(query);
+  const handleSearchTermChange = query => {
+    setSearchTerm(query);
+  };
   const getUserInformation = async () => {
     Geolocation.setRNConfiguration({
       skipPermissionRequests: false,
@@ -81,36 +189,31 @@ export const MenuHeaders = ({hide = true, title = ''}) => {
       async position => {
         // Get the longitude and latitude of the device
         const longitude = position.coords.longitude;
-        //console.log('longitude:', longitude)
         const latitude = position.coords.latitude;
-        //.log('latitude:', latitude)
-        setLocationMaps({latitude: latitude, longitude: longitude});
+        setLocationMaps({ latitude: latitude, longitude: longitude });
 
         const address = await Geocoder.geocodePosition({
           lat: latitude,
           lng: longitude,
         });
-        //console.log('address:', address);
+
         if (address[0].locality != null) {
           setPosition(() => address[0].locality);
         } else {
           setPosition(() => address[0].subLocality);
         }
-        // console.log('address[0].locality:', address[0]?.locality)
+
         setContry(() => address[0].country);
-        // console.log('address[0].country:', address[0].country)
         setContryCode(() => address[0].countryCode);
-        // console.log('address[0].countryCode:', address[0].countryCode)
         showPromptNotification();
         requestNotifications();
       },
       error => {
-        // Handle the error
-
         showPromptNotification();
         requestNotifications();
       },
     );
+
     try {
       const value = await AsyncStorage.getItem('profile');
       const parsedToken = JSON.parse(value);
@@ -120,329 +223,306 @@ export const MenuHeaders = ({hide = true, title = ''}) => {
     } catch (e) {}
   };
 
-  // ********************************************************************
-  // **   ##******************************************************##   **
-  // *  ### *************** OPEN MENU   ************************** ###  *
-  // **   ##******************************************************##   **
-  // ********************************************************************
+  const openFilterMenu = () => {
+    navigation.navigate('FilterScreen');
+  };
 
   const requestLocationPermission = async () => {
-    try {
-      const result = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-      if (result === RESULTS.GRANTED) {
-        // console.log('Location permission granted');
-        setLicationEnabled(()=> true)
-        // Proceed with accessing the location
-      } else {
-        setLicationEnabled(()=> false)
-
-        Linking.openSettings();
-        // Handle the case where permission is denied
-      }
-    } catch (error) {
-      setLicationEnabled(()=> false)
-
-    }
+    // ... requestLocationPermission function logic ...
   };
 
   const requestNotificationPermission = async () => {
-    try {
-      const result = await check(PERMISSIONS.IOS.NOTIFICATIONS);
-      console.log('Notification permission result:', result);
-      if (result === RESULTS.GRANTED) {
-        console.log('Notification permission granted');
-        // Notification permissions are granted
-      } else {
-        console.log('Notification permission not granted');
-        // Notification permissions are not granted
-      }
-    } catch (error) {
-      console.log('Error checking notification permission:', error);
-      // Handle any errors that occur during the permission check
-    }
-  }
+    // ... requestNotificationPermission function logic ...
+  };
+
   const openMenu = async () => {
     navigation.openDrawer();
   };
+
   const [text, setText] = useState('');
 
-  const handleTextChange = (inputText) => {
+  const handleTextChange = inputText => {
     setText(inputText);
   };
 
+
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.menuIconeContainer}>
-          {/* i add this one because when i navigation
-         from custum drawer it will not send opendawer with navigation si i need to handle this undifined function 
-         and replace open drawer with replace and menu icon with arrow left icone to avoid any bug
-          */}
-          <View>
-            {navigation.openDrawer ? (
-              <Ionicons
-                name="menu-outline"
-                color={Color.light}
-                size={28}
-                onPress={() => openMenu()}
-              />
-            ) : (
-              <Ionicons
-                name="arrow-back"
-                color={Color.light}
-                size={28}
-                onPress={() => navigation.goBack()}
-              />
-            )}
-          </View>
-          <Pressable
-            style={{alignSelf: 'center'}}
-            onPress={requestLocationPermission}>
-            <Text
-              style={{
-                textAlign: 'center',
-                color: Color.light,
-                fontSize: 14,
-                fontFamily: Font.primary,
-              }}>
-              Localisation actuelle
-            </Text>
-            <Text
-              style={{
-                textAlign: 'center',
-                color: Color.light,
-                fontSize: 16,
-                fontFamily: Font.primary,
-              }}>
-              {position}, {ContryCode}
-            </Text>
-          </Pressable>
-          <View style={styles.notificationContainer}>
-            {notificationEnabled ? (
-              <Ionicons
-                name="notifications-outline"
-                color={Color.light}
-                size={25}
-                onPress={() => navigation.navigate('Setting')}
-              />
-            ) : (
-              <Ionicons
-                name="notifications-off-outline"
-                color={Color.light}
-                size={25}
-                onPress={() => navigation.navigate('Setting')}
-              />
-            )}
-          </View>
-        </View>
-        
-        <View style={styles.headerSerchContainer}>
-          <View style={styles.headerSearchIcon}>
-            <Ionicons
-              name="search"
-              color={Color.light}
-              size={24}
-              onPress={() => openMenu()}
+    <View style={styles.frameParent}>
+      <View style={[styles.subtractParent, styles.maskGroupIconPosition]}>
+        <Image
+          style={styles.subtractIcon}
+          resizeMode="cover"
+          source={require("../../assets/home2/subtract.png")}
+        />
+        <Image
+          style={[styles.maskGroupIcon, styles.frameChildLayout]}
+          resizeMode="cover"
+          source={require("../../assets/home2/mask-group9.png")}
+        />
+        <View style={styles.frameGroup}>
+          <View style={[styles.frameContainer, styles.frameParentFlexBox]}>
+          <TouchableOpacity         onPress={() => navigation.navigate("ProfileHome")}
+
+    style={[styles.component1Parent, styles.frameParentFlexBox]}
+>
+<Image
+  style={[styles.component1Icon, { borderRadius: 50 }]} // Adjust the borderRadius value as needed
+  resizeMode="cover"
+  source={imageUrl ? { uri: imageUrl } : require("../../assets/home2/group-6356531.png")}
+/>
+
+</TouchableOpacity>
+
+            <View style={[styles.groupParent, styles.frameParentFlexBox]}>
+            <View>
+  <View>
+    <Image
+      style={styles.frameItem}
+      resizeMode="cover"
+      source={require("../../assets/home2/group-6356432.png")}
+    />
+    {user ? (
+      <Text style={[styles.text, styles.frTypo]}>
+        {user.loyaltyPoints}
+      </Text>
+    ) : (
+      <Text style={[styles.text, styles.frTypo]}>{' '}</Text>
+
+    )}
+    <Text style={[styles.text, styles.frTypo]}>{' '}</Text>
+  </View>
+</View>
+
+          <View style={[styles.frameView, styles.frameParentFlexBox]}>
+            <View style={[styles.frameParent1, styles.frameParentFlexBox]}>
+              <View
+                style={[
+                  styles.translateFill0Wght400Grad0Parent,
+                  styles.iconsFlexBox,
+                ]}
+              >
+                <Image
+                  style={styles.translateFill0Wght400Grad0Icon}
+                  resizeMode="cover"
+                  source={require("../../assets/home2/translate-fill0-wght400-grad0-opsz24-1.png")}
+                />
+                <Text style={[styles.fr, styles.frTypo]}>Fr</Text>
+              </View>
+              <TouchableOpacity onPress={toggleDarkMode}>
+            <Image
+                style={styles.component3Icon}
+                resizeMode="cover"
+                source={isDarkMode ? require("../../assets/home3/Component30.png") : require("../../assets/home2/component-3.png")}
             />
-            <TextInput style={styles.headerSearchInput}
-              icon="search"
-              placeholder="Recherche..."
-              autoCapitalize="none"
-              keyboardAppearance="dark"
-            />
+        </TouchableOpacity>
+            </View>
+            <View style={[styles.iconsWrapper, styles.iconsFlexBox]}>
+              <View style={styles.icons}>
+                <View
+                  style={[styles.subtractParent, styles.maskGroupIconPosition]}
+                >
+                  <Image
+                    style={[styles.iconsetStructure, styles.frameChildLayout]}
+                    resizeMode="cover"
+                    source={require("../../assets/home2/-iconset-structure1.png")}
+                  />
+                 <TouchableOpacity onPress={() => {
+  navigation.navigate('NotificationsScreen');
+  setHasNotification(false);
+}}>
+  <Image
+    style={styles.vectorIcon}
+    resizeMode="cover"
+    source={require("../../assets/home2/vector.png")}
+  />
+</TouchableOpacity>
+
+<View style={[
+  styles.iconsChild, 
+  styles.iconsFlexBox, 
+  hasNotification ? styles.notificationColor : styles.defaultColor
+]}>
+</View>               
+    </View>
+              </View>
+            </View>
           </View>
-          <TouchableOpacity style={styles.filterButton}>
-            <Ionicons
-              style={styles.filterIcon}
-              name="filter"
-              color={Color.light}
-              size={20}
-              onPress={() => openMenu()}
-            />
-            <Text style={styles.filterButtonText}>Filters</Text>
-          </TouchableOpacity>
         </View>
       </View>
-
-      <View style={styles.userProfilecontainer}>
-        <View style={styles.userPointsContainer}>
-          <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: '1%',
-          }}>
-          {user.sex == 'h' ? (
-            <Pressable onPress={() => navigation.navigate('Profil')}>
-              <Image
-                source={require('../../assets/appIcones/userProfileImage.png')}
-                style={{width: WIDTH / 9, height: WIDTH / 9, borderRadius: 100}}
-              />
-            </Pressable>
-          ) : (
-            <Pressable onPress={() => navigation.navigate('Profil')}>
-              <Image
-                source={require('../../assets/images/girl.png')}
-                style={{width: WIDTH / 7, height: WIDTH / 7, borderRadius: 100}}
-              />
-            </Pressable>
-          )}
-
-          <Text style={{paddingLeft: '3%', textAlign:'center', fontFamily:Font.secondary}}>
-            Vous avez{' '}
-            <Text style={{fontSize: 14, color: '#000', fontWeight: 'bold'}}>
-              {user ? (
-                user.loyaltyPoints
-              ) : (
-                <ActivityIndicator size="small" color={Color.primary} />
-              )}
-            </Text>{' '}
-            points
-          </Text>
-          </View>
-          <TouchableOpacity style={styles.eventJoinButton}>
-            <Text style={styles.eventJoinButtonText}>Redeem</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </>
+    </View>
+    </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginVertical: 0,
-    height: HEIGHT / 5,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    backgroundColor: Color.primary,
-    flex: 1,
-    
+  maskGroupIconPosition: {
+    left: "0%",
+    right: "0%",
+    top: "0%",
+    width: "100%",
   },
-  menuIconeContainer: {
-    marginTop: '3%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: '8%',
-    paddingVertical: '2%',
-    // height:HEIGHT/ 13
+  frameChildLayout: {
+    maxHeight: "100%",
+    maxWidth: "100%",
+    overflow: "hidden",
+    position: "absolute",
   },
-  profileIconeContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  giftIconeContianer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  userPointsContainer: {
+  frameParentFlexBox: {
+    alignItems: "center",
     flexDirection: "row",
-    alignContent: 'center',
-    justifyContent: 'space-between',
   },
+  frTypo: {
+    marginLeft: 4,
+    textAlign: "left",
+    color: Color.darkGrey21,
+    fontWeight: "800",
+    lineHeight: 27,
+  },
+  iconsFlexBox: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  subtractIcon: {
+    height: 89,
+    width: WIDTH,
+  },
+  maskGroupIcon: {
+    height: "79.33%",
+    bottom: "20.67%",
+    left: "0%",
+    right: "0%",
+    top: "0%",
+    width: "100%",
+    maxWidth: "100%",
+  },
+  component1Icon: {
+    width: 45,
+    zIndex: 0,
+    height: 45,
+  },
+  frameChild: {
+    width: 40,
+    zIndex: 0,
+    height: 40,
+    left: "1%",
+    borderRadius: 25,
 
-  userProfilecontainer: {
-    width: '80%',
-    alignSelf: 'center',
-    borderRadius: 30,
-    bottom: '15%',
-    position: 'relative',
-    justifyContent: 'center',
-    backgroundColor: Color.light,
-    paddingVertical:'1%',
-    ...Platform.select({
-      ios: {
-        shadowColor: 'rgba(90, 90, 90, 0.1)',
-        shadowOffset: { width: 0, height: 20 },
-        shadowOpacity: 1,
-        shadowRadius: 20,
-      },
-      android: {
-        elevation: 11,
-      },
-    }),
+    right: "16.13%",
   },
-  notificationContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 50,
-    borderWidth: 1,
-    borderColor: "#fff",
-    backgroundColor: '#fff',
-    opacity: .7,
-    alignItems: 'center',
-    justifyContent: 'center',
+  component1Parent: {
+    height: 42,
+    alignItems: "center",
   },
-  eventJoinButton: {
-    backgroundColor: '#5669FF',
-    borderRadius: 7,
-    textTransform: 'capitalize',
-    height: 28,
-    width: 60,
-    display: 'flex',
-    alignContent: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-    marginTop: 5,
-  },
-  eventJoinButtonText: {
-    fontSize: 12,
-    textAlign: 'center',
-    color: '#FFFFFF',
-  },
-  headerSearchPlaceholder: {
-    color: '#FFF', // Add this line to set the placeholder text color to white
-  },
-  headerSerchContainer: {
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'space-between',
-    width: '82%',
-    alignSelf: 'center',
-    borderRadius: 30,
-    marginBottom: 5,
-    marginTop: 10,
-  },
-  headerSearchInput: {
-    borderLeftWidth: 1,
-    color: '#fff',
-    borderColor: '#fff',
-    lineHeight: 34,
-    paddingLeft: 10,
-    paddingVertical: 0,
-    height: 34,
-    fontSize: 16,
-    opacity: .7,
-  },
-  headerSearchIcon: {
-    flexDirection: 'row',
-    columnGap: 5,
-    alignContent: 'center',
-    justifyContent: 'center',
-  },
-  filterButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignContent: 'center',
-    rowGap: 5,
-    columnGap: 5,
-    backgroundColor: Color.customBlue,
-    width: 90,
-    borderRadius: 50,
+  frameItem: {
+    top: 30,
     height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: 30,
   },
-  filterButtonText: {
-    color: Color.light,
+  text: {
+    fontSize: 15,
+    left: 25,
+    fontFamily: FontFamily.poppinsSemiBold,
   },
-  filterIcon: {
-    backgroundColor: '#A29EF0',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 50,
-  }
-  
+  groupParent: {
+    marginLeft: 8,
+  },
+  frameContainer: {
+    width: 116,
+    height: 42,
+    alignItems: "center",
+  },
+  defaultColor: {
+    backgroundColor: 'gray'
+  },
+  notificationColor: {
+    backgroundColor: 'red'
+  },
+  translateFill0Wght400Grad0Icon: {
+    width: 16,
+    height: 16,
+    
+    overflow: "hidden",
+  },
+  fr: {
+    fontSize: FontSize.size_mini,
+    fontFamily: FontFamily.interSemiBold,
+  },
+  translateFill0Wght400Grad0Parent: {
+    borderRadius: Border.br_41xl,
+    backgroundColor: Color.colorGoldenrod,
+    width: 55,
+    padding: Padding.p_5xs,
+    height: 40,
+    flexDirection: "row",
+  },
+  component3Icon: {
+    width: 75,
+    height: 51,
+    marginLeft: 8,
+  },
+  frameParent1: {
+    
+    width: WIDTH * 0.5,
+    justifyContent: "flex-end",
+  },
+  iconsetStructure: {
+    display: "none",
+    left: "0%",
+    right: "0%",
+    top: "0%",
+    width: "100%",
+    bottom: "0%",
+    height: "100%",
+  },
+  vectorIcon: {
+    width: 21,
+    height: 25,
+  },
+  iconsChild: {
+    top: -2,
+    left: 17,
+    borderRadius: Border.br_8xs,
+    backgroundColor: Color.error,
+    borderStyle: "solid",
+    borderColor: Color.primary,
+    borderWidth: 2,
+    width: 12,
+    height: 12,
+    position: "absolute",
+  },
+  subtractParent: {
+    bottom: "0%",
+    height: "100%",
+    left: "0%",
+    right: "0%",
+    top: "0%",
+    width: "100%",
+    position: "absolute",
+  },
+  icons: {
+    width: 32,
+    height: 32,
+  },
+  iconsWrapper: {
+    height: 39,
+    marginLeft: 14,
+    width: 30,
+    flexDirection: "row",
+  },
+  frameView: {
+    marginLeft: 34,
+  },
+  frameGroup: {
+    top: 25,
+    left: 20,
+    flexDirection: "row",
+    position: "absolute",
+  },
+  frameParent: {
+    height: 105,
+    width: 360,
+  },
 });
+
+export default MenuHeaders;

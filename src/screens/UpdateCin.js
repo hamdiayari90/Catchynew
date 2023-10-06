@@ -55,7 +55,7 @@ export const UpdateCin = ({navigation, route}) => {
         body: cin,
       };
       let response = await fetch(
-        `http://145.239.166.14:8082/user/updateCin/${id}`,
+        `http://94.237.82.88:8082/user/updateCin/${id}`,
         requestOptions,
       );
 

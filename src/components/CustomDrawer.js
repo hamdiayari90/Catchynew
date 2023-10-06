@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -52,6 +52,48 @@ export const CustomDrawer = props => {
       }, 1000);
     } catch (e) { }
   };
+  
+  const [imageUrl, setImageUrl] = useState(null);
+
+  useEffect(() => {
+    fetchUserData(); // Call the function to fetch user data
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const result = await AsyncStorage.getItem('profile');
+      if (result !== null) {
+        const parsedToken = JSON.parse(result);
+        const token = jwt_decode(parsedToken);
+        const userId = token.id;
+        await fetchProfileImage(userId);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const fetchProfileImage = async (userId) => {
+    try {
+      console.log('Fetching profile image...');
+      const response = await fetch(`http://94.237.82.88:8082/user/${userId}/`);
+      const data = await response.json();
+
+      if (data && data.image && data.image.name) {
+        const baseUrl = 'https://www.catchy.tn/media/user/';
+        const imageName = data.image.name;
+        const imageUrl = baseUrl + imageName;
+        console.log('Profile image fetched successfully:', imageUrl);
+        setImageUrl(imageUrl);
+
+      } else {
+        console.error('Error fetching profile image: Invalid response data');
+      }
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+    }
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -61,16 +103,18 @@ export const CustomDrawer = props => {
         contentContainerStyle={styles.contentContainer}>
         {user && (
           <View style={styles.profileContainer}>
-            <TouchableOpacity
-              onPress={() => Linking.openURL(`tde://catchy/profil`)}
-              style={styles.profileImageContainer}>
-              <Image
-                source={user.sex == 'h'
-                  ? require('../assets/appIcones/userProfileImage.png')
-                  : require('../assets/images/girl.png')}
-                style={styles.profileImage}
-              />
-            </TouchableOpacity>
+          <TouchableOpacity
+  onPress={() => Linking.openURL(`tde://catchy/profil`)}
+  style={styles.profileImageContainer}
+>
+<View style={styles.profileImageContainer}>
+  <Image
+    source={{ uri: imageUrl }}
+    style={styles.profileImage}
+  />
+</View>
+</TouchableOpacity>
+
 
             <Text style={styles.usernameText}>
               {user.username} {user.lastname}
@@ -104,6 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 0,
     overflow: 'hidden',
+    marginBottom: 70,
   },
   blueShape: {
     position: 'absolute',
@@ -113,7 +158,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    backgroundColor: '#4A43EC',
+    backgroundColor: '#000000',
  
 },
   contentContainer: {

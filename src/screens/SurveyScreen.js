@@ -9,8 +9,11 @@ import {
   Pressable,
   Image,
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import SliderCarousel from 'react-native-reanimated-carousel';
+import { DarkModeProvider, DarkModeContext } from '../../DarkModeContext';
+import { BackHandler } from 'react-native';
 
+import FastImage from 'react-native-fast-image';
 import {MenuHeaders} from '../components/menuComponent/MenuHeaders';
 import * as api from '../services/api';
 import jwt_decode from 'jwt-decode';
@@ -25,7 +28,7 @@ import {Card, Button} from 'react-native-paper';
 import {SwitchPage} from '../components/SwitchPage/SwitchPage';
 import {FlatList} from 'react-native';
 import NoData from '../components/NoData.js/NoData';
-
+import SurveyBanner from '../components/SurveyBanner'; // Import the ImageCarousel component here.
 export default function SurveyList({navigation}) {
   //get data from survey
   const [refreshing, setRefreshing] = React.useState(false);
@@ -46,6 +49,7 @@ export default function SurveyList({navigation}) {
       setUserInfo(() => alluserInfo);
     } catch (e) {}
   };
+  const { isDarkMode } = React.useContext(DarkModeContext);
 
   const getUserSurveys = () => {
     setRefreshing(true);
@@ -70,10 +74,21 @@ export default function SurveyList({navigation}) {
 
   useEffect(() => {
     if (isFocused) {
-      getUserSurveys();
-      getUserInformation();
+        getUserSurveys();
+        getUserInformation();
     }
-  }, [isFocused]);
+
+    const handleBackButtonPress = () => {
+        navigation.navigate('Home');
+        return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackButtonPress);
+
+    return () => {
+        BackHandler.removeEventListener('hardwareBackPress', handleBackButtonPress);
+    };
+}, [isFocused, navigation]);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -81,97 +96,44 @@ export default function SurveyList({navigation}) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+<ScrollView style={[styles.container, { backgroundColor: isDarkMode ? "#323232" : "#FFFFFF" }]}>
       {refreshing ? (
         <SwitchPage />
       ) : (
         <>
-          {/* ********************************************************************************************************* */}
-          {/* ********************************************* NAV BAR *************************************************** */}
-          {/* ********************************************************************************************************* */}
-
-
-          <View styles={styles.scrollView}>
-            <View style={{height: HEIGHT / 5}}>
-              <MenuHeaders
-                navigation={navigation}
-                userInfo={userInfo}
-                title="SONDAGE"
-              />
+          <View style={styles.scrollView}>
+            <View style={{height: HEIGHT / 5.3}}>
+              <MenuHeaders />
             </View>
 
             <FlatList
               data={surveys}
+              key="two-columns" // Static key for numColumns value of 2
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({item, index}) => (
-                <Card style={styles.card} key={index}>
-                  <View style={{flexDirection: 'row'}}>
-                    <View style={{width: '50%'}}>
-                      <Pressable
-                        onPress={() =>
-                          navigation.navigate('DetailsSondage', {
-                            survey: item,
-                            userId: userId,
-                          })
-                        }>
-                        <Card.Cover
-                          source={{
-                            uri:
-                              'data:image/png;base64,' +
-                              (item.product
-                                ? item.product.photo.picByte
-                                : item.partner.logo.picByte),
-                          }}
-                          resizeMode="center"
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: '#fff',
-                          }}></Card.Cover>
-                      </Pressable>
-                    </View>
-                    <View style={styles.detailGiftContainer}>
-                      <View style={styles.priceContainer}>
-                        <Text style={styles.price}>
-                          Disparu dans
-                          {moment(item.endDate).locale('fr').fromNow(true)}
-                        </Text>
-                        <View style={styles.nameContainer}>
-                          <Text style={styles.name}>
-                            {item.description.length > 48
-                              ? item.description.slice(0, 49) + '...'
-                              : item.description}
-                          </Text>
-                        </View>
-                      </View>
-
-                      <Pressable
-                        style={styles.voirDetailContainer}
-                        onLongPress={() =>
-                          navigation.navigate('DetailsSondage', {
-                            survey: item,
-                            userId: userId,
-                          })
-                        }
-                        onPress={() =>
-                          navigation.navigate('RespondSurvey', {
-                            surveyId: item.id,
-                            userId: userId,
-                          })
-                        }>
-                        <Button mode="contained" color={Color.primary}>
-                          voir detail
-                        </Button>
-                      </Pressable>
-                    </View>
-                  </View>
-                </Card>
+                <View key={index} style={styles.surveyItemContainer}> 
+                  <SurveyBanner
+                    item={item}
+                    navigation={navigation}
+                  />
+                  
+                </View>
+                
               )}
-              ListEmptyComponent={<NoData message={  'il n\'y a pas des sondages...'} />}
+              
+              numColumns={2}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              
             />
+            
           </View>
+          
         </>
       )}
-    </SafeAreaView>
+      
+    </ScrollView>
+    
   );
 }
 {
@@ -208,6 +170,11 @@ const styles = StyleSheet.create({
     height: HEIGHT / 5,
     overflow: 'hidden',
     borderRadius: 10,
+  },
+  surveyItemContainer: {
+    flex: 1, 
+    left: -12,
+    margin: 4,
   },
   detailGiftContainer: {
     width: '50%',
